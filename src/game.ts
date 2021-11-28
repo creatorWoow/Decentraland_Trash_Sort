@@ -116,4 +116,4 @@ engine.addSystem(new PhysicsSystem())
 // }
 
 
-// engine.addSystem(new RotatorSystem());
+engine.addSystem(new RotatorSystem());
