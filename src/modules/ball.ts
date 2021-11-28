@@ -20,7 +20,7 @@ export class Garbage extends Entity {
   public world: CANNON.World
 
   public static BEST_RECYCLED = 1
-  public static WORSE_RECYCLED = 0
+  public static WORSE_RECYCLED = -1
 
   private _type: string
 
