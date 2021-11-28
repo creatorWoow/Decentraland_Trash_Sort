@@ -47,7 +47,7 @@ export class Planet extends Entity {
     }
 
     private setAppearance() {
-        ui.displayAnnouncement(`Current pollution ${this.pollutionIndex}`)
+        ui.displayAnnouncement(`Current score ${this.pollutionIndex}`)
     }
 
     public getPositionByPipe(pipe: number) : Vector3 {
