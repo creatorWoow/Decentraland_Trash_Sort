@@ -1,5 +1,5 @@
 import {PlayerHand} from './PlayerHand';
-import {Sound} from '../modules/sound';
+import {Sound} from './Sound';
 
 const pickUpSound = new Sound(new AudioClip("sounds/pickUp.mp3"), false)
 const throwSound = new Sound(new AudioClip("sounds/throw.mp3"), false)

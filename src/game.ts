@@ -1,24 +1,32 @@
 import { initGarbage } from "./initFunctions/initGarbage"
-import { loadColliders } from "./modules/colliders"
-import { Garbage } from "./initFunctions/initGarbage"
-import {Planet} from "./classes/Planet"
-import {GarbageBin} from "./classes/GarbageBin";
-import {initBoundary, initButton, initPipe} from "./modules/plainmodels";
-import {initPowerMeterSystem} from "./initFunctions/initPowermeter";
-import {PlayerHand} from './classes/PlayerHand';
+import { initColliders } from "./initFunctions/initColliders"
+import { initButton } from "./initFunctions/initButton";
+import { initPipe } from "./initFunctions/initPipe";
+import { initBoundary } from "./initFunctions/initBoundary";
+import { initPowerMeterSystem } from "./initFunctions/initPowermeter";
+import { Garbage } from "./classes/Garbage"
+import { Planet } from "./classes/Planet"
+import { GarbageBin } from "./classes/GarbageBin";
+import { PlayerHand } from './classes/PlayerHand';
 
 
+const PLAYER_HAND = new PlayerHand();
+const WORLD = new CANNON.World();
+WORLD.quatNormalizeSkip = 0;
+WORLD.quatNormalizeFast = false;
+WORLD.gravity.set(0, -9.82, 0);
 
-const redPlanet = new Entity()
-redPlanet.addComponent(new GLTFShape("models/planet_red.glb"))
+
+const redPlanet = new Entity();
+redPlanet.addComponent(new GLTFShape("models/planet_red.glb"));
 redPlanet.addComponent(new Transform({
   position: new Vector3(12, 1, 8),
   scale: new Vector3(1, 1.25, 1).scale(0.4)
 }));
-engine.addEntity(redPlanet)
+engine.addEntity(redPlanet);
 
-const planetTables = new Entity()
-planetTables.addComponent(new GLTFShape("models/plasticmetalpaper.glb"))
+const planetTables = new Entity();
+planetTables.addComponent(new GLTFShape("models/plasticmetalpaper.glb"));
 planetTables.addComponent(new Transform({
   position: new Vector3(8, 0, 8)
 }));
@@ -29,20 +37,14 @@ floorBase.addComponent(new GLTFShape("models/floorbase.glb"));
 floorBase.addComponent(new Transform({
   position: new Vector3(8, 0, 8)
 }));
-engine.addEntity(floorBase)
+engine.addEntity(floorBase);
 
-const PLAYER_HAND = new PlayerHand()
 
-// Setup our world
-const world = new CANNON.World()
-world.quatNormalizeSkip = 0
-world.quatNormalizeFast = false
-world.gravity.set(0, -9.82, 0) // m/s²
 
 // Setup ground material
 const physicsMaterial = new CANNON.Material("groundMaterial")
 const ballContactMaterial = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, { friction: 1, restitution: 0.5 })
-world.addContactMaterial(ballContactMaterial)
+WORLD.addContactMaterial(ballContactMaterial)
 
 // Create a ground plane and apply physics material
 const groundShape: CANNON.Plane = new CANNON.Plane()
@@ -51,15 +53,15 @@ groundBody.addShape(groundShape)
 groundBody.material = physicsMaterial
 groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2) // Reorient ground plane to be in the y-axis
 groundBody.position.set(0, 0.05, 0)
-world.addBody(groundBody)
+WORLD.addBody(groundBody)
 
 const pipe: Entity = initPipe()
 const boundary: Entity = initBoundary()
 const planet: Planet = Planet.init()
 let bins = GarbageBin.init(PLAYER_HAND, planet)
-const garbageOnFloor: Array<Garbage> = initGarbage(PLAYER_HAND, physicsMaterial, world)
+const garbageOnFloor: Array<Garbage> = initGarbage(PLAYER_HAND, physicsMaterial, WORLD)
 initButton(garbageOnFloor)
-loadColliders(bins, planet, boundary, world)
+initColliders(bins, planet, boundary, WORLD)
 initPowerMeterSystem(garbageOnFloor)
 
 
@@ -69,7 +71,7 @@ const MAX_TIME_STEPS = 10
 
 class PhysicsSystem implements ISystem {
   update(dt: number): void {
-    world.step(FIXED_TIME_STEPS, dt, MAX_TIME_STEPS)
+    WORLD.step(FIXED_TIME_STEPS, dt, MAX_TIME_STEPS)
 
     for (let i = 0; i < garbageOnFloor.length; i++) {
       if (!garbageOnFloor[i].isActive) {

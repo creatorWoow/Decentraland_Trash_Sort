@@ -1,7 +1,9 @@
 import {Garbage} from '../classes/Garbage';
 import * as utils from '@dcl/ecs-scene-utils';
 import {Delay} from '@dcl/ecs-scene-utils';
-import {Cooldown} from '../modules/plainmodels';
+
+@Component("cooldown")
+export class Cooldown {}
 
 
 const BUTTON_ACTION_NAME: string = "Button_Action"

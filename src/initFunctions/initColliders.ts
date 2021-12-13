@@ -1,9 +1,9 @@
 import {GarbageBin} from "../classes/GarbageBin";
 import {Planet} from "../classes/Planet";
-import {trashBinIndexes, trashBinVertices} from "./meshData/binMesh";
-import {boundaryIndexes, boundaryVertices} from "./meshData/boundaryMesh";
+import {trashBinIndexes, trashBinVertices} from "../meshData/binMesh";
+import {boundaryIndexes, boundaryVertices} from "../meshData/boundaryMesh";
 
-export function loadColliders(bins: Array<GarbageBin>,
+export function initColliders(bins: Array<GarbageBin>,
                               planet: Planet,
                               boundary: Entity,
                               cannonWorld: CANNON.World): void {
