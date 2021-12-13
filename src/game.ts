@@ -1,31 +1,21 @@
-import { initGarbage } from "./modules/ball"
-import * as ui from "@dcl/ui-scene-utils"
+import { initGarbage } from "./initFunctions/initGarbage"
 import { loadColliders } from "./modules/colliders"
-import { Garbage } from "./modules/ball"
-import {Planet} from "./modules/Planet"
-import {GarbageBin} from "./modules/GarbageBin";
+import { Garbage } from "./initFunctions/initGarbage"
+import {Planet} from "./classes/Planet"
+import {GarbageBin} from "./classes/GarbageBin";
 import {initBoundary, initButton, initPipe} from "./modules/plainmodels";
-import {initPowerMeterSystem} from "./modules/powermeter";
-import { addLabel } from "@dcl/ecs-scene-utils"
+import {initPowerMeterSystem} from "./initFunctions/initPowermeter";
+import {PlayerHand} from './classes/PlayerHand';
 
 
-export class PlayerHand {
-  body: CANNON.Body | undefined
-  entity: Garbage | undefined
 
-  constructor(body?: CANNON.Body | undefined, entity?: Garbage | undefined) {
-    this.body = body
-    this.entity = entity
-  }
-}
-
-// const redPlanet = new Entity()
-// redPlanet.addComponent(new GLTFShape("models/planet_red.glb"))
-// redPlanet.addComponent(new Transform({
-//   position: new Vector3(12, 1, 8),
-//   scale: new Vector3(1, 1.25, 1).scale(0.4)
-// }));
-// engine.addEntity(redPlanet)
+const redPlanet = new Entity()
+redPlanet.addComponent(new GLTFShape("models/planet_red.glb"))
+redPlanet.addComponent(new Transform({
+  position: new Vector3(12, 1, 8),
+  scale: new Vector3(1, 1.25, 1).scale(0.4)
+}));
+engine.addEntity(redPlanet)
 
 const planetTables = new Entity()
 planetTables.addComponent(new GLTFShape("models/plasticmetalpaper.glb"))
@@ -116,4 +106,4 @@ engine.addSystem(new PhysicsSystem())
 // }
 
 
-engine.addSystem(new RotatorSystem());
+// engine.addSystem(new RotatorSystem());
