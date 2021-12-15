@@ -1,4 +1,4 @@
-import {Garbage} from '../classes/Garbage';
+import {Garbage} from './Garbage';
 
 export class PlayerHand {
   body: CANNON.Body | undefined
