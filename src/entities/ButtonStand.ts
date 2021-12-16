@@ -1,8 +1,7 @@
 import * as utils from '@dcl/ecs-scene-utils';
 import {Delay} from '@dcl/ecs-scene-utils';
 import {MODELS_PATH} from '../core/Constants';
-import {CoolDown} from '../core/Utils';
-import {startGame} from "../core/GameUtils";
+import {CoolDown, GameContext} from "../core/GameContext";
 
 const BUTTON_ACTION_NAME = 'Button_Action';
 
@@ -70,7 +69,7 @@ export class ButtonStand {
             button.removeComponent(CoolDown);
           }),
       );
-      startGame()
+      GameContext.getGameContext().startGame();
       button.getComponent(Delay).onTargetTimeReached(button);
     }));
     engine.addEntity(button);

@@ -42,6 +42,7 @@ export class Planet extends Entity {
 
     public getGarbage(item: Garbage, pipeIndex: number): void {
 
+
         this.pollutionIndex += item.recycledRate;
 
         this.setAppearance();

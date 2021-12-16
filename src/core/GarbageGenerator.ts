@@ -27,13 +27,11 @@ export function garbageGenerator(playerHand: PlayerHand, world: PhysicsWorld): A
         props.push(new Garbage(
             getRandomGarbage(),
             playerHand,
-            new Transform({
-                position: new Vector3(
-                    INITIAL_X_POS + Math.random() * HORIZONTAL_DISTANCE,
-                    INITIAL_Y_POS + i * VERTICAL_DISTANCE,
-                    INITIAL_Z_POS + Math.random())
-            }),
-            world))
+            new Vector3(
+                INITIAL_X_POS + Math.random() * HORIZONTAL_DISTANCE,
+                INITIAL_Y_POS + i * VERTICAL_DISTANCE,
+                INITIAL_Z_POS + Math.random()),
+            world));
     }
     return props
 }
