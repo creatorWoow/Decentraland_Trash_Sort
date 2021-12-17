@@ -1,0 +1,3 @@
+[submodule "src/assets/models"]
+	path = src/assets/models
+	url = https://github.com/shokking5/TrashSortModels

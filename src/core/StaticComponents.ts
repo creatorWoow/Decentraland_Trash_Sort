@@ -22,29 +22,16 @@ export function initBoundary(): Entity {
  */
 export function initFloor() {
     const floorBase = new Entity();
-    floorBase.addComponent(new GLTFShape(MODELS_PATH + '/floorbase.glb'));
+    floorBase.addComponent(new GLTFShape(MODELS_PATH + '/scene.glb'));
     floorBase.addComponent(new Transform({
-        position: new Vector3(8, 0, 8),
+        position: new Vector3(0, 0, 0),
     }));
     engine.addEntity(floorBase);
 }
 
-/**
- * Инициализирует трубу, из которой падает мусор
- */
-export function initPipe(): Entity {
-    const pipe = new Entity()
-    pipe.addComponent(new GLTFShape(MODELS_PATH + "/truba.glb"))
-    pipe.addComponent(new Transform({
-        position: new Vector3(5, 0, 9.7),
-        scale: new Vector3(1, 1, 1).scale(0.5)
-    }))
-    engine.addEntity(pipe)
-    return pipe
-}
-
 export function initStaticComponents() {
+    // initSignBoards();
     initFloor();
-    initBoundary();
-    initPipe();
+    // initBoundary();
+    // initPipe();
 }

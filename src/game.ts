@@ -9,6 +9,8 @@ import {GarbagePhysicsSystem} from "./systems/GarbagePhysicsSystem";
 import {initPowerMeterSystem} from "./systems/PowermeterSystem";
 import {initStaticComponents} from "./core/StaticComponents";
 import {GameContext} from "./core/GameContext";
+import {Clock} from "./entities/Clock";
+import {PlanetSystem} from "./systems/PlanetSystem";
 
 initStaticComponents()
 engine.addEntity(new GameContext())
@@ -24,6 +26,7 @@ const garbageOnFloor: Array<Garbage> = garbageGenerator(
 );
 
 engine.addSystem(new GarbagePhysicsSystem(garbageOnFloor, physicsWorld.world))
-initPowerMeterSystem(garbageOnFloor)
+const planetSystem: PlanetSystem = new PlanetSystem(planet);
+engine.addSystem(planetSystem);
 // colliders(garbageBins, planet, components, physicsWorld.world);
 

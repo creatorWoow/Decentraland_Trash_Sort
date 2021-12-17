@@ -60,8 +60,6 @@ export class GarbageBin extends Entity {
                     position: this.planet.getPositionByPipe(this.pipe - 1),
                     scale: new Vector3(1, 1, 1).scale(0.5),
                 }));
-
-
     }
 
     private initAnimations() {
@@ -79,9 +77,6 @@ export class GarbageBin extends Entity {
      * Запускает анимацию переработки
      */
     private startRecycling() {
-        this.getComponent(Animator).getClip(this.TRASHBIN_WORK_ANIM).play()
-        this.getComponent(Animator).getClip(this.TRASHBIN_PIPE_ANIM).play()
-        this.getComponent(Animator).getClip(this.TRASHBIN_BUTTON_ANIM).play()
         this.getComponent(Animator).getClip(this.TRASHBIN_TANK_ANIM).play()
     }
 
@@ -96,7 +91,7 @@ export class GarbageBin extends Entity {
             {
                 onCameraEnter: () => {
                     log("Пользователь пытается сдать мусор с типом " +
-                    playerHand.prop?.type, "; тип мусорки: " + this.type)
+                        playerHand.prop?.type, " в мусорку принимающую " + this.type)
                     if (!playerHand || !playerHand.prop)
                         return;
 
@@ -112,12 +107,13 @@ export class GarbageBin extends Entity {
     }
 
     recycleWrongProp(garbage: Garbage) {
-        log(`Пользователь неправильно положил мусор с типом ${garbage.type}`)
         garbage.recycledRate = Garbage.WORSE_RECYCLED;
+        log(`Пользователь неправильно положил мусор с типом ${garbage.type}` +
+            `теперь его уровень переработки равен: ${garbage.recycledRate}`);
         this.startRecycling();
         ui.displayAnnouncement('You did wrong');
-        this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
         this.planet.getGarbage(garbage, this.pipe);
+        this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
     }
 
     recycleRightProp(garbage: Garbage) {
@@ -125,8 +121,8 @@ export class GarbageBin extends Entity {
         garbage.recycledRate = Garbage.BEST_RECYCLED;
         this.startRecycling();
         ui.displayAnnouncement("You did correct");
-        this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
         this.planet.getGarbage(garbage, this.pipe);
+        this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
     }
 
     public static init(playerHand: PlayerHand, planet: Planet): Array<GarbageBin> {

@@ -9,7 +9,7 @@ const INITIAL_Z_POS = 9.7
 const HORIZONTAL_DISTANCE = 0.2
 const VERTICAL_DISTANCE =  0.3
 
-const GARBAGE_INIT_QUANTITY = 10;
+const GARBAGE_INIT_QUANTITY = 15;
 const GARBAGE_MODELS: Array<string> = [
     "plastic_1.glb", "plastic_2.glb", "plastic_3.glb",
     "paper_1.glb", "paper_2.glb",

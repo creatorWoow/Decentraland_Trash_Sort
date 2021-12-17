@@ -4,23 +4,25 @@ import {MODELS_PATH} from "../core/Constants";
 
 export class Planet extends Entity {
 
-    public static TUBE_ANIM_NAME = "tubeanim_"
-    public static X_INIT_POS = -1
-    public static Y_INIT_POS = 0
-    public static Z_INIT_POS = -2.7
-    public static BIN_DISTANCE = 2.6
+    public static TUBE_ANIM_NAME = "tubeanim_";
+
+    public static X_INIT_POS = -1;
+    public static Y_INIT_POS = 0;
+    public static Z_INIT_POS = -2.7;
+    public static BIN_DISTANCE = 2.6;
 
     private pollutionIndex: number;
 
-    constructor(transform?: Transform) {
+    private _redPlanet: Entity;
+
+    constructor() {
         super();
         this.pollutionIndex = 0;
-        this.initEntity(transform || new Transform({
-            position: new Vector3(12, 0, 8),
-            scale: new Vector3(0.5, 0.5, 0.5)
-        }))
+        this.initMainPlanet();
+        this._redPlanet = this.initRedPlanet();
     }
-    private initEntity(transform: Transform) {
+
+    private initMainPlanet() {
 
         /* Animations */
         const planetAnimator = new Animator()
@@ -35,16 +37,37 @@ export class Planet extends Entity {
 
         this.addComponent(planetAnimator)
         this.addComponent(new GLTFShape(MODELS_PATH + '/planet.glb'))
-        this.addComponent(transform)
+        this.addComponent(new Transform({
+            position: new Vector3(12, 0, 8),
+            scale: new Vector3(1, 1, 1).scale(0.5)
+        }));
 
         engine.addEntity(this)
     }
 
+    private initRedPlanet() {
+        const redPlanet = new Entity();
+        redPlanet.addComponent(new GLTFShape(MODELS_PATH + '/planet_red.glb'));
+
+        const planetPos = this.getComponent(Transform);
+        redPlanet.addComponent(new Transform(
+            {position: new Vector3(
+                    planetPos.position.x,
+                    planetPos.position.y + 2,
+                    planetPos.position.z),
+                scale: new Vector3(1, 1, 1).scale(0.3),
+            }
+        ));
+        engine.addEntity(redPlanet);
+        return redPlanet;
+    }
+
+
     public getGarbage(item: Garbage, pipeIndex: number): void {
 
-
+        log(`В планету попал мусор: garbage(type: ${item.type},` +
+            `recycleIndex: ${item.recycledRate})`)
         this.pollutionIndex += item.recycledRate;
-
         this.setAppearance();
         this.playPipeAnimation(pipeIndex);
     }
@@ -53,7 +76,7 @@ export class Planet extends Entity {
         ui.displayAnnouncement(`Current score ${this.pollutionIndex}`)
     }
 
-    public getPositionByPipe(pipe: number) : Vector3 {
+    public getPositionByPipe(pipe: number): Vector3 {
         let pipePosition: Vector3 = this.getComponent(Transform).position
         return new Vector3(
             pipePosition.x + Planet.X_INIT_POS,
@@ -65,12 +88,11 @@ export class Planet extends Entity {
         this.getComponent(Animator).getClip(Planet.TUBE_ANIM_NAME + pipeIndex)?.play();
     }
 
-    public static init() : Planet { 
-        return new Planet(new Transform({
-            position: new Vector3(12, 0, 8),
-            scale: new Vector3(1, 1, 1).scale(0.5)
-        }))
+    get redPlanet(): Entity {
+        return this._redPlanet;
+    }
+
+    set redPlanet(value: Entity) {
+        this._redPlanet = value;
     }
 }
-
-

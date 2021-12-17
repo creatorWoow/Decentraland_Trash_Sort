@@ -8,7 +8,8 @@ const pickUpSound = new Sound(
 const throwSound = new Sound(
     new AudioClip(SOUNDS_PATH + '/throw.mp3'), false);
 const THROW_STRENGTH_MULTIPLIER = 0.125;
-export const GARBAGE_GROUP_NAME = "Garbage"
+export const GARBAGE_GROUP_NAME = 'Garbage';
+export const ACTIVE_GARBAGE_COMPONENT = "ActiveGarbage";
 
 @Component(GARBAGE_GROUP_NAME)
 class GarbageGroup {}
@@ -28,20 +29,22 @@ export class Garbage extends Entity {
   public static WORSE_RECYCLED = -1;
   private _type: string;
   private _recycledRate: number;
+
   initialPosition: Vector3;
+  currentPosition: Vector3;
 
   /**
    * Создает объект мусора
    * @param {string} modelFilename имя файла модели мусора
    * @param {PlayerHand} playerHand рука пользователя, в которую будет
    * кластаться мусор
-   * @param {Transform} initialPosition начальная позиция мусора на сцене
+   * @param {Transform} position начальная позиция мусора на сцене
    * @param {PhysicsWorld} physicsWorld физический мир библиотеки Cannon
    */
   constructor(
       modelFilename: string,
       playerHand: PlayerHand,
-      initialPosition: Vector3,
+      position: Vector3,
       physicsWorld: PhysicsWorld) {
     super();
 
@@ -50,10 +53,11 @@ export class Garbage extends Entity {
     this._type = modelFilename.split('_')[0];
     this._recycledRate = 1;
     this.playerHand = playerHand;
-    this.initialPosition = initialPosition;
+    this.initialPosition = new Vector3(position.x, position.y, position.z);
+    this.currentPosition = new Vector3(position.x, position.y, position.z);
 
     log(`Создание мусора с параметрами: (type=${this.type},` +
-        `initialPosition=${initialPosition})`)
+        `initialPosition=${position})`)
 
     /* Инициализация модели */
     const canShape = new GLTFShape(MODELS_PATH + "/garbage/" + modelFilename);
@@ -61,7 +65,7 @@ export class Garbage extends Entity {
     this.addComponent(canShape);
     canShape.visible = false;
     this.body = this.initGarbagePhysics()
-    this.addComponent(new Transform({position: initialPosition}));
+    this.addComponent(new Transform({position: position}));
 
     this.toggleOnPointerDown(true);
 
@@ -69,7 +73,7 @@ export class Garbage extends Entity {
     this.getComponent(Animator).addClip(new AnimationState('PickUp',
         {looping: false}));
 
-    this.addComponent(new GarbageGroup())
+    this.addComponent(new GarbageGroup());
     engine.addEntity(this);
   }
 
@@ -77,9 +81,9 @@ export class Garbage extends Entity {
     // Create physics body for ball
     const body = new CANNON.Body({
       mass: 1, // kg
-      position: new CANNON.Vec3(this.initialPosition.x,
-          this.initialPosition.y,
-          this.initialPosition.z), // m
+      position: new CANNON.Vec3(this.currentPosition.x,
+          this.currentPosition.y,
+          this.currentPosition.z), // m
       // Create sphere shaped body with a diameter of 0.22m
       shape: new CANNON.Cylinder(0.115, 0.115, 0.286, 28),
     });
@@ -132,10 +136,11 @@ export class Garbage extends Entity {
     this.toggleOnPointerDown(true);
     this.getComponent(GLTFShape).visible = false;
     this.getComponent(GLTFShape).withCollisions = false;
-    this.removeComponent(Transform);
-    this.addComponent(new Transform({position: this.initialPosition}))
     log("Текущее положение мусора: ", this.initialPosition);
-    this.body.position.set(0, 0, 0)
+    this.body.position.set(
+        this.initialPosition.x,
+        this.initialPosition.y,
+        this.initialPosition.z)
   }
 
   /**
@@ -217,9 +222,6 @@ export class Garbage extends Entity {
    * @param {number} value уровень переработки мусора
    */
   public set recycledRate(value: number) {
-    if (value < 0 || value > 1) {
-      return;
-    }
     this._recycledRate = value;
   }
 
