@@ -18,7 +18,6 @@ export class Sound extends Entity {
   }
 
   playAudioAtPosition(transform: Vector3): void {
-    this.getComponent(Transform).position = transform
-    this.getComponent(AudioSource).playing = true
+    // this.getComponent(Transform).position = transform   this.getComponent(AudioSource).playing = true
   }
 }
