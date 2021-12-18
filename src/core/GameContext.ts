@@ -4,6 +4,7 @@ import {setTimeout} from "@dcl/ecs-scene-utils";
 
 export const GAME_CONTEXT_COMPONENT_NAME = "GameContextComponent"
 export const GAME_CONTEXT_NAME = "GameContext"
+const GAME_DURATION = 45000;
 
 @Component('coolDown')
 export class CoolDown {}
@@ -41,9 +42,20 @@ export class GameContext extends Entity {
 
         this._started = true;
         this.clockWork.startTimer();
-        setTimeout(45000, () => {
+        setTimeout(GAME_DURATION, () => {
             this.endGame();
+            log('2. TIMER GOT OUT')
         });
+    }
+
+    /**
+     * Проверяет, завершена ли игра
+     */
+    public checkGame() {
+        const activeGarbageCount = this.getActiveGarbageQuantity();
+        if(activeGarbageCount === 0) {
+            this.endGame();
+        }
     }
 
     public endGame() {
@@ -52,24 +64,30 @@ export class GameContext extends Entity {
             this._started = false;
         }
 
-        let hasActive = false;
+        log('ENDGAME')
+
+        const activeGarbageCount = this.getActiveGarbageQuantity();
 
         for(const prop in this.garbage) {
-            if(this.garbage[prop].isActive) {
-                hasActive = true;
-            }
             this.garbage[prop].disable();
         }
 
-        if(hasActive) {
+        if(activeGarbageCount > 0) {
             log("Вы не успели спасти планету, попробуте еще раз");
         } else {
-            log("Планета была спасена, ура")
+            log("Планета была спасена, ура");
         }
     }
 
     public resetGame() {
         log("Перезапуск игры")
+        this.disableAllGarbage();
+    }
+
+    /**
+     * Убирает со сцены весь мусор
+     */
+    public disableAllGarbage() {
         const garbage: Record<string, Garbage> =
             engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
         for (let prop in garbage) {
@@ -85,10 +103,13 @@ export class GameContext extends Entity {
         this._score = value;
     }
 
+    /**
+     * Возвращает singleton игрового контекста
+     */
     public static getGameContext() : GameContext {
-        const gameContextKey =
-            Object.keys(engine.getEntitiesWithComponent(GAME_CONTEXT_COMPONENT_NAME))[0];
-        return engine.getEntitiesWithComponent(GAME_CONTEXT_COMPONENT_NAME)[gameContextKey]
+        const context = engine.getEntitiesWithComponent(GAME_CONTEXT_COMPONENT_NAME)
+        const key = Object.keys(context)[0];
+        return context[key];
     }
 
     /**
@@ -102,9 +123,15 @@ export class GameContext extends Entity {
         for (let key in garbage) {
             activeGarbageLen += garbage[key].isActive ? 1 : 0; /* си на месте */
         }
+        log(`Активное количество мусора: ${activeGarbageLen}`);
         return activeGarbageLen;
     }
 
+    /**
+     * Возвращает список выброшенного мусора
+     * @return {Array<Garbage>} мусор, который был выброшен игроком и который
+     * находится в неактивном состоянии
+     */
     public getDiscardedGarbage() : Array<Garbage>  {
         const garbage = engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
         const discardedGarbage: Array<Garbage> =

@@ -1,9 +1,9 @@
 import {Planet} from 'src/entities/Planet';
-import * as ui from '@dcl/ui-scene-utils';
 import * as utils from '@dcl/ecs-scene-utils';
 import {PlayerHand} from './PlayerHand';
 import {Garbage} from './Garbage';
 import {MODELS_PATH} from '../core/Constants';
+import {GameContext} from "../core/GameContext";
 
 /**
  * Мусорка определенного типа
@@ -14,11 +14,11 @@ export class GarbageBin extends Entity {
     TRASHBIN_TANK_ANIM = "trashbin_work2";
     TRASHBIN_PIPE_ANIM = "trashbin_work3";
     TRASHBIN_BUTTON_ANIM = "buttonanim";
-    TRASHBIN_SUCCESS_ANIM = "successanim";
+    TRASHBIN_SUCCESS_ANIM = "success_anim";
     TRASHBIN_DENIED_ANIM = "denied_anim";
 
-    private static garbageBinShape = new GLTFShape(MODELS_PATH + '/trashbin.glb');
-    private static STOP_BIN_CLIP = 'Stop';
+    private static garbageBinShape =
+        new GLTFShape(MODELS_PATH + '/trashbin.glb');
     private readonly animator: Animator;
 
 
@@ -77,7 +77,7 @@ export class GarbageBin extends Entity {
      * Запускает анимацию переработки
      */
     private startRecycling() {
-        this.getComponent(Animator).getClip(this.TRASHBIN_TANK_ANIM).play()
+        this.getComponent(Animator).getClip(this.TRASHBIN_BUTTON_ANIM).play()
     }
 
     private createEnterPoint(playerHand: PlayerHand) {
@@ -99,8 +99,10 @@ export class GarbageBin extends Entity {
                         this.recycleRightProp(playerHand.prop);
                     else
                         this.recycleWrongProp(playerHand.prop);
+
                     playerHand.prop.disable();
                     playerHand.clearHand();
+                    GameContext.getGameContext().checkGame();
                 }
             },
         ));
@@ -111,18 +113,16 @@ export class GarbageBin extends Entity {
         log(`Пользователь неправильно положил мусор с типом ${garbage.type}` +
             `теперь его уровень переработки равен: ${garbage.recycledRate}`);
         this.startRecycling();
-        ui.displayAnnouncement('You did wrong');
         this.planet.getGarbage(garbage, this.pipe);
-        this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
+        // this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
     }
 
     recycleRightProp(garbage: Garbage) {
         log(`Пользователь рассортировал мусор с типом ${garbage.type} правильно`)
         garbage.recycledRate = Garbage.BEST_RECYCLED;
         this.startRecycling();
-        ui.displayAnnouncement("You did correct");
         this.planet.getGarbage(garbage, this.pipe);
-        this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
+        // this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
     }
 
     public static init(playerHand: PlayerHand, planet: Planet): Array<GarbageBin> {

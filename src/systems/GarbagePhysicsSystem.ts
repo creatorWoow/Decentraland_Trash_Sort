@@ -18,7 +18,7 @@ export class GarbagePhysicsSystem implements ISystem {
         this.world.step(FIXED_TIME_STEPS, dt, MAX_TIME_STEPS);
 
         for (let i = 0; i < this.garbageOnFloor.length; i++) {
-            if (!this.garbageOnFloor[i].isActive) {
+            if (!this.garbageOnFloor[i].isEnabled) {
                 this.garbageOnFloor[i].getComponent(Transform).position
                     .copyFrom(this.garbageOnFloor[i].body.position);
 

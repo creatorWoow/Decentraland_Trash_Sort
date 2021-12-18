@@ -1,4 +1,3 @@
-import * as ui from '@dcl/ui-scene-utils'
 import {Garbage} from "./Garbage";
 import {MODELS_PATH} from "../core/Constants";
 
@@ -38,7 +37,7 @@ export class Planet extends Entity {
         this.addComponent(planetAnimator)
         this.addComponent(new GLTFShape(MODELS_PATH + '/planet.glb'))
         this.addComponent(new Transform({
-            position: new Vector3(12, 0, 8),
+            position: new Vector3(10, 0, 8),
             scale: new Vector3(1, 1, 1).scale(0.5)
         }));
 
@@ -68,12 +67,7 @@ export class Planet extends Entity {
         log(`В планету попал мусор: garbage(type: ${item.type},` +
             `recycleIndex: ${item.recycledRate})`)
         this.pollutionIndex += item.recycledRate;
-        this.setAppearance();
         this.playPipeAnimation(pipeIndex);
-    }
-
-    private setAppearance() {
-        ui.displayAnnouncement(`Current score ${this.pollutionIndex}`)
     }
 
     public getPositionByPipe(pipe: number): Vector3 {

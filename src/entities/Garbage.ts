@@ -19,9 +19,15 @@ class GarbageGroup {}
  * быть пластиком, металом или бумагой.
  */
 export class Garbage extends Entity {
+
   public playerHand;
+
+  /* True, если объект находится на сцене */
   public isActive = false;
-  public isThrown = true;
+
+  /* Если для предмета включена физика */
+  public isEnabled = false;
+
   public body: CANNON.Body;
   public world: CANNON.World;
   public material: CANNON.Material
@@ -103,9 +109,8 @@ export class Garbage extends Entity {
     pickUpSound.getComponent(AudioSource).playOnce();
     this.playerHand.body = this.body;
     this.playerHand.prop = this;
-    this.isActive = true;
+    this.isEnabled = true;
     this.body.sleep();
-    this.isThrown = false;
     this.body.position.set(
         Camera.instance.position.x,
         Camera.instance.position.y,
@@ -122,6 +127,7 @@ export class Garbage extends Entity {
    */
   public enable() : void {
     this.body.wakeUp();
+    this.isActive = true;
     this.getComponent(GLTFShape).visible = true;
   }
 
@@ -131,7 +137,7 @@ export class Garbage extends Entity {
   public disable() : void {
     this.body.sleep();
     this.isActive = false;
-    this.isThrown = true;
+    this.isEnabled = false;
     this.setParent(null);
     this.toggleOnPointerDown(true);
     this.getComponent(GLTFShape).visible = false;
@@ -152,8 +158,7 @@ export class Garbage extends Entity {
     throwSound.getComponent(AudioSource).playOnce();
     this.playerHand.clearHand()
 
-    this.isActive = false;
-    this.isThrown = true;
+    this.isEnabled = false;
     this.setParent(null);
     this.toggleOnPointerDown(true);
 

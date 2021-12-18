@@ -24,7 +24,7 @@ export function initFloor() {
     const floorBase = new Entity();
     floorBase.addComponent(new GLTFShape(MODELS_PATH + '/scene.glb'));
     floorBase.addComponent(new Transform({
-        position: new Vector3(0, 0, 0),
+        position: new Vector3(0, 0, 0)
     }));
     engine.addEntity(floorBase);
 }

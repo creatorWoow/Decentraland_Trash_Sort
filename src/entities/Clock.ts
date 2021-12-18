@@ -6,7 +6,7 @@ export class Clock extends Entity {
     private readonly _position = new Vector3(8, 0, 13);
     private readonly _animation = new AnimationState(Clock.CLOCKWORK_ANIMATION, {looping: false})
     private readonly _animator = new Animator();
-    private readonly _scale = new Vector3(1, 1, 1).scale(0.5)
+    private readonly _scale = new Vector3(1, 1, 1).scale(1)
 
     constructor() {
         super();

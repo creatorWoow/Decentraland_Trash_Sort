@@ -29,7 +29,7 @@ export class ButtonStand {
     const buttonStand = new Entity();
     buttonStand.addComponent(new BoxShape());
     buttonStand.addComponent(new Transform({
-      position: new Vector3(3, 0, 3),
+      position: new Vector3(4, 0, 4),
       scale: new Vector3(0.5, 2.3, 0.5).scale(1.2),
     }).rotate(new Vector3(1, 0, 0), 10));
     engine.addEntity(buttonStand);
