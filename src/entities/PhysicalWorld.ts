@@ -1,10 +1,10 @@
-export class PhysicsWorld {
+export class PhysicalWorld {
 
     private readonly _world: CANNON.World;
     private readonly _physicsMaterial: CANNON.Material;
 
     constructor() {
-        this._world = PhysicsWorld.initWorld();
+        this._world = PhysicalWorld.initWorld();
         this._physicsMaterial = this.initPhysicsMaterial();
     }
 

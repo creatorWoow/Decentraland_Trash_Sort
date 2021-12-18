@@ -21,6 +21,10 @@ export class ButtonStand {
     this.button = this.initButton();
   }
 
+  public static init() : ButtonStand {
+    return new ButtonStand();
+  }
+
   /**
      * Инициализирует подставку для кнопки
      * @return {Entity} возвращает dcl сущность

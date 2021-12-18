@@ -1,5 +1,6 @@
 import {Garbage} from "./Garbage";
 import {MODELS_PATH} from "../core/Constants";
+import {PlanetChangeProducer} from "../core/PlanerChangeProducer";
 
 export class Planet extends Entity {
 
@@ -10,13 +11,18 @@ export class Planet extends Entity {
     public static Z_INIT_POS = -2.7;
     public static BIN_DISTANCE = 2.6;
 
+
+    planetChangeProducer: PlanetChangeProducer;
+
     private pollutionIndex: number;
 
     private _redPlanet: Entity;
 
-    constructor() {
+    constructor(eventManger: EventManager) {
         super();
+        this.planetChangeProducer = new PlanetChangeProducer(eventManger);
         this.pollutionIndex = 0;
+        this.eventManager = eventManger;
         this.initMainPlanet();
         this._redPlanet = this.initRedPlanet();
     }
@@ -34,7 +40,7 @@ export class Planet extends Entity {
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 2, {looping: false}))
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 3, {looping: false}))
 
-        this.addComponent(planetAnimator)
+        this.addComponent(planetAnimator);
         this.addComponent(new GLTFShape(MODELS_PATH + '/planet.glb'))
         this.addComponent(new Transform({
             position: new Vector3(10, 0, 8),
@@ -62,11 +68,16 @@ export class Planet extends Entity {
     }
 
 
-    public getGarbage(item: Garbage, pipeIndex: number): void {
+    public getGarbage(garbage: Garbage, pipeIndex: number): void {
 
-        log(`В планету попал мусор: garbage(type: ${item.type},` +
-            `recycleIndex: ${item.recycledRate})`)
-        this.pollutionIndex += item.recycledRate;
+        log(`В планету попал мусор: ${garbage.toString()}`);
+        engine.removeEntity(garbage);
+        /* Объясните, пожалуйста, почему это не работает???? */
+        // this.eventManager?.fireEvent(new OnPlanetChangeEvent(garbage));
+        /* а это работает */
+        this.planetChangeProducer.produce(garbage);
+
+        this.pollutionIndex += garbage.recycledRate;
         this.playPipeAnimation(pipeIndex);
     }
 

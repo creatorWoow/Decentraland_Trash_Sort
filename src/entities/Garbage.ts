@@ -1,13 +1,10 @@
 import {PlayerHand} from './PlayerHand';
 import {Sound} from './Sound';
 import {MODELS_PATH, SOUNDS_PATH} from '../core/Constants';
-import {PhysicsWorld} from './PhysicsWorld';
+import {PhysicalWorld} from './PhysicalWorld';
 
 const pickUpSound = new Sound(
     new AudioClip(SOUNDS_PATH + '/pickup.mp3'), false);
-const throwSound = new Sound(
-    new AudioClip(SOUNDS_PATH + '/throw.mp3'), false);
-const THROW_STRENGTH_MULTIPLIER = 0.125;
 export const GARBAGE_GROUP_NAME = 'Garbage';
 export const ACTIVE_GARBAGE_COMPONENT = "ActiveGarbage";
 
@@ -45,13 +42,13 @@ export class Garbage extends Entity {
    * @param {PlayerHand} playerHand рука пользователя, в которую будет
    * кластаться мусор
    * @param {Transform} position начальная позиция мусора на сцене
-   * @param {PhysicsWorld} physicsWorld физический мир библиотеки Cannon
+   * @param {PhysicalWorld} physicsWorld физический мир библиотеки Cannon
    */
   constructor(
       modelFilename: string,
       playerHand: PlayerHand,
       position: Vector3,
-      physicsWorld: PhysicsWorld) {
+      physicsWorld: PhysicalWorld) {
     super();
 
     this.world = physicsWorld.world;
@@ -149,47 +146,6 @@ export class Garbage extends Entity {
         this.initialPosition.z)
   }
 
-  /**
-   * Выполняет бросок мусора
-   * @param {Vector3} throwDirection направление броска
-   * @param {number} throwPower сила броска
-   */
-  playerThrow(throwDirection: Vector3, throwPower: number): void {
-    throwSound.getComponent(AudioSource).playOnce();
-    this.playerHand.clearHand()
-
-    this.isEnabled = false;
-    this.setParent(null);
-    this.toggleOnPointerDown(true);
-
-    // Physics
-    this.body.wakeUp();
-    this.body.velocity.setZero();
-    this.body.angularVelocity.setZero();
-
-
-    this.body.position.set(
-        Camera.instance.feetPosition.x + throwDirection.x,
-        throwDirection.y + Camera.instance.position.y,
-        Camera.instance.feetPosition.z + throwDirection.z,
-    );
-
-    const throwPowerAdjusted = throwPower * THROW_STRENGTH_MULTIPLIER;
-
-    this.body.applyImpulse(
-        new CANNON.Vec3(
-            throwDirection.x * throwPowerAdjusted,
-            throwDirection.y * throwPowerAdjusted,
-            throwDirection.z * throwPowerAdjusted,
-        ),
-        new CANNON.Vec3(
-            this.body.position.x,
-            this.body.position.y,
-            this.body.position.z,
-        ),
-    );
-  }
-
   toggleOnPointerDown(isOn: boolean): void {
     if (isOn) {
       this.addComponentOrReplace(
@@ -244,5 +200,15 @@ export class Garbage extends Entity {
    */
   public set type(value: string) {
     this._type = value;
+  }
+
+  public toString = () : string => {
+    return `Garbage (type: ${this.type},` +
+        `recycledRate: ${this.recycledRate}, ` +
+        `position: ${this.initialPosition})`;
+  }
+
+  public isWorseRecycled() : boolean {
+    return this.recycledRate === Garbage.WORSE_RECYCLED;
   }
 }

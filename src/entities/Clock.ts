@@ -1,12 +1,13 @@
 import {MODELS_PATH} from "../core/Constants";
+import {setTimeout} from "@dcl/ecs-scene-utils";
 
 export class Clock extends Entity {
 
     private static CLOCKWORK_ANIMATION = 'Circle.001Action';
-    private readonly _position = new Vector3(8, 0, 13);
-    private readonly _animation = new AnimationState(Clock.CLOCKWORK_ANIMATION, {looping: false})
-    private readonly _animator = new Animator();
-    private readonly _scale = new Vector3(1, 1, 1).scale(1)
+
+    /* Время, когда таймер закончится 45 секунд */
+    public static TIMER_DURATION: number = 45000;
+    private timer: Entity | undefined;
 
     constructor() {
         super();
@@ -15,21 +16,22 @@ export class Clock extends Entity {
 
     private initEntity(): void {
         this.addComponent(new GLTFShape(MODELS_PATH + "/clockwork.glb"));
-        this.addComponent(new Transform({
-            position: this._position,
-            scale: this._scale,
-        }).rotate(Vector3.Down(), 180));
-
-        this._animator.addClip(this._animation);
-        this.addComponent(this._animator);
+        this.initAnimation();
         engine.addEntity(this);
     }
 
+    private initAnimation() {
+        const animator = new Animator();
+        animator.addClip(
+            new AnimationState(Clock.CLOCKWORK_ANIMATION, {looping: false}));
+        this.addComponent(animator);
+    }
 
     /**
      * Запускает анимацию таймера
      */
-    public startTimer() {
+    public startTimer(callback: () => void) {
+        this.timer = setTimeout(Clock.TIMER_DURATION, callback);
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).play();
     }
 
@@ -37,6 +39,8 @@ export class Clock extends Entity {
      * Останавливает таймер и сбрасывает
      */
     public stopTimer() {
+        if (this.timer !== undefined)
+            engine.removeEntity(this.timer);
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).stop();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).reset();
     }
@@ -45,6 +49,8 @@ export class Clock extends Entity {
      * Останавливает анимацию таймера и сбрасывает его в начальное состояние
      */
     public resetTimer() {
+        if (this.timer !== undefined)
+            engine.removeEntity(this.timer);
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).stop();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).reset();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).play();

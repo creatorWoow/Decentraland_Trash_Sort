@@ -1,10 +1,10 @@
 import {Garbage, GARBAGE_GROUP_NAME} from "../entities/Garbage";
 import {Clock} from "../entities/Clock";
-import {setTimeout} from "@dcl/ecs-scene-utils";
+import {GarbageGenerator} from "./GarbageGenerator";
+import {OnPlanetChangeEvent} from "./PlanerChangeProducer";
 
 export const GAME_CONTEXT_COMPONENT_NAME = "GameContextComponent"
 export const GAME_CONTEXT_NAME = "GameContext"
-const GAME_DURATION = 45000;
 
 @Component('coolDown')
 export class CoolDown {}
@@ -15,92 +15,94 @@ class GameContextComponent {}
 export class GameContext extends Entity {
     private _score: number;
     private _started: boolean;
-    private clockWork: Clock;
-    private garbage: Record<string, Garbage>;
 
-    constructor(clockWork: Clock) {
+    private clock: Clock;
+    private garbageGenerator: GarbageGenerator;
+
+
+
+    constructor(garbageGenerator: GarbageGenerator,
+                eventManager: EventManager) {
         super();
-        this.clockWork = clockWork;
-        this._started = false;
-        this.addComponent(new GameContextComponent());
         this._score = 0;
-        this.garbage = {};
+        this.clock = new Clock();
+        this._started = false;
+        this.eventManager = eventManager;
+        this.garbageGenerator = garbageGenerator;
+        this.addComponent(new GameContextComponent());
+        this.initPlanetChangeListener();
     }
 
     public startGame() {
-        if (this._started)
-            this.resetGame();
 
-        this.garbage =
-            engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
-        log(`Запуск игры, количество мусора на сцене: ` +
-            Object.keys(this.garbage).length);
-
-        for (let prop in this.garbage) {
-            this.garbage[prop].enable();
+        if (this._started) {
+            this.clock.stopTimer();
+            this.deleteAllGarbage();
         }
-
         this._started = true;
-        this.clockWork.startTimer();
-        setTimeout(GAME_DURATION, () => {
+
+        let garbage = this.garbageGenerator.generateGarbage();
+        log(`Запуск игры, количество мусора на сцене: ${garbage.length}`);
+        garbage.forEach(e => e.enable());
+
+        this.clock.startTimer(() => {
             this.endGame();
-            log('2. TIMER GOT OUT')
+            log('TIMER GOT OUT')}
+        );
+    }
+
+    /**
+     * Инициализирует слушателя изменений планеты
+     */
+    public initPlanetChangeListener() {
+        this.eventManager?.addListener(
+            OnPlanetChangeEvent,
+            GameContext,
+            ({ garbage }) => {
+                log("Было перехвачено событие OnPlanetChangeEvent");
+                if (garbage?.isWorseRecycled()) {
+                    this.garbageGenerator.generateGarbage(3).forEach(e => e.enable());
+                }
+                if (this.isGameEnded())
+                    this.endGame();
         });
     }
 
     /**
      * Проверяет, завершена ли игра
      */
-    public checkGame() {
-        const activeGarbageCount = this.getActiveGarbageQuantity();
-        if(activeGarbageCount === 0) {
-            this.endGame();
-        }
+    public isGameEnded() : boolean {
+        return this.getActiveGarbageQuantity() == 0;
     }
 
+    /**
+     * Завершает игру, останавливает таймер и делает вывод, победил игрок
+     * или проиграл, исходя из количества мусора на сцене.
+     */
     public endGame() {
         if(this._started) {
-            this.clockWork.stopTimer();
+            this.clock.stopTimer();
             this._started = false;
         }
-
         log('ENDGAME')
-
         const activeGarbageCount = this.getActiveGarbageQuantity();
-
-        for(const prop in this.garbage) {
-            this.garbage[prop].disable();
-        }
-
         if(activeGarbageCount > 0) {
             log("Вы не успели спасти планету, попробуте еще раз");
         } else {
             log("Планета была спасена, ура");
         }
-    }
-
-    public resetGame() {
-        log("Перезапуск игры")
-        this.disableAllGarbage();
+        this.deleteAllGarbage();
     }
 
     /**
      * Убирает со сцены весь мусор
      */
-    public disableAllGarbage() {
+    public deleteAllGarbage() {
         const garbage: Record<string, Garbage> =
             engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
         for (let prop in garbage) {
-            garbage[prop].disable();
+            engine.removeEntity(garbage[prop]);
         }
-    }
-
-    get score(): number {
-        return this._score;
-    }
-
-    set score(value: number) {
-        this._score = value;
     }
 
     /**
@@ -117,14 +119,11 @@ export class GameContext extends Entity {
      * (этот мусор еще не выброшен).
      * @return {number} количество мусора на сцене
      */
-    public getActiveGarbageQuantity() : number {
-        const garbage = engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
-        let activeGarbageLen = 0;
-        for (let key in garbage) {
-            activeGarbageLen += garbage[key].isActive ? 1 : 0; /* си на месте */
-        }
-        log(`Активное количество мусора: ${activeGarbageLen}`);
-        return activeGarbageLen;
+    public  getActiveGarbageQuantity() : number {
+        const garbageQuantity =
+            Object.keys(engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME)).length;
+        log(`Активное количество мусора: ${garbageQuantity}`);
+        return garbageQuantity;
     }
 
     /**
@@ -142,6 +141,14 @@ export class GameContext extends Entity {
             }
         }
         return discardedGarbage;
+    }
+
+    get score(): number {
+        return this._score;
+    }
+
+    set score(value: number) {
+        this._score = value;
     }
 
 }

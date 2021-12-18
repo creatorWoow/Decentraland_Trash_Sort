@@ -1,10 +1,10 @@
 import {PlayerHand} from '../entities/PlayerHand';
 import {Garbage} from "../entities/Garbage";
-import {PhysicsWorld} from "../entities/PhysicsWorld";
+import {PhysicalWorld} from "../entities/PhysicalWorld";
 
 export class GarbageGenerator {
 
-    private readonly _world: PhysicsWorld;
+    private readonly _world: PhysicalWorld;
     private readonly _playerHand: PlayerHand;
     private readonly _props: Array<Garbage>;
     private static INITIAL_X_POS = 5
@@ -18,21 +18,22 @@ export class GarbageGenerator {
         "paper_1.glb", "paper_2.glb",
         "metal_can.glb"]
 
-    constructor(playerHand: PlayerHand, world: PhysicsWorld) {
+    constructor(playerHand: PlayerHand, world: PhysicalWorld) {
         this._world = world;
         this._playerHand = playerHand;
         this._props = [];
     }
 
-    private static _getRandomGarbage() {
-        return GarbageGenerator.GARBAGE_MODELS[Math.floor(Math.random() * GarbageGenerator.GARBAGE_MODELS.length)];
+    private static getRandomGarbageModel() {
+        return GarbageGenerator.GARBAGE_MODELS[
+            Math.floor(Math.random() * GarbageGenerator.GARBAGE_MODELS.length)];
     }
 
-    private _generateGarbage(): Array<Garbage> {
+    public generateGarbage(quantity: number = GarbageGenerator.GARBAGE_INIT_QUANTITY): Array<Garbage> {
         log("Начало генерации рандомного мусора, количество: ", GarbageGenerator.GARBAGE_MODELS)
-        for (let i = 0; i < GarbageGenerator.GARBAGE_INIT_QUANTITY; i++) {
+        for (let i = 0; i < quantity; i++) {
             this._props.push(new Garbage(
-                GarbageGenerator._getRandomGarbage(),
+                GarbageGenerator.getRandomGarbageModel(),
                 this._playerHand,
                 new Vector3(
                     GarbageGenerator.INITIAL_X_POS + Math.random() * GarbageGenerator.HORIZONTAL_DISTANCE,
@@ -41,9 +42,5 @@ export class GarbageGenerator {
                 this._world));
         }
         return this._props;
-    }
-
-    get garbage() {
-        return this._generateGarbage();
     }
 }

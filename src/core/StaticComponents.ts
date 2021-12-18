@@ -29,9 +29,16 @@ export function initFloor() {
     engine.addEntity(floorBase);
 }
 
+export function initFallingCoins() {
+    const coins = new Entity();
+    coins.addComponent(new GLTFShape(MODELS_PATH + '/falling_coins.glb'));
+    coins.addComponent(new Transform({
+        position: new Vector3(8, 1, 8),
+        scale: new Vector3(1, 1, 1).scale(0.4),
+    }));
+    engine.addEntity(coins);
+}
+
 export function initStaticComponents() {
-    // initSignBoards();
     initFloor();
-    // initBoundary();
-    // initPipe();
 }

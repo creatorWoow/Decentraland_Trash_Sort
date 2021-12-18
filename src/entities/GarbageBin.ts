@@ -3,7 +3,6 @@ import * as utils from '@dcl/ecs-scene-utils';
 import {PlayerHand} from './PlayerHand';
 import {Garbage} from './Garbage';
 import {MODELS_PATH} from '../core/Constants';
-import {GameContext} from "../core/GameContext";
 
 /**
  * Мусорка определенного типа
@@ -100,9 +99,7 @@ export class GarbageBin extends Entity {
                     else
                         this.recycleWrongProp(playerHand.prop);
 
-                    playerHand.prop.disable();
                     playerHand.clearHand();
-                    GameContext.getGameContext().checkGame();
                 }
             },
         ));
@@ -114,7 +111,7 @@ export class GarbageBin extends Entity {
             `теперь его уровень переработки равен: ${garbage.recycledRate}`);
         this.startRecycling();
         this.planet.getGarbage(garbage, this.pipe);
-        // this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
+        this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
     }
 
     recycleRightProp(garbage: Garbage) {
@@ -122,7 +119,7 @@ export class GarbageBin extends Entity {
         garbage.recycledRate = Garbage.BEST_RECYCLED;
         this.startRecycling();
         this.planet.getGarbage(garbage, this.pipe);
-        // this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
+        this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
     }
 
     public static init(playerHand: PlayerHand, planet: Planet): Array<GarbageBin> {

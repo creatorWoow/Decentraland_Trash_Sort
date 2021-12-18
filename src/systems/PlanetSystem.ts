@@ -4,20 +4,35 @@ import {Planet} from "../entities/Planet";
 @Component("lerpData")
 export class LerpSizeData {
 
-    public static DEFAULT_LERP_SPEED:number = 6;
+    public static DEFAULT_LERP_SPEED: number = 6;
 
     origin: number;
     target: number;
     fraction: number;
     speed: number;
 
-    constructor(origin: number, target: number, speed: number = 0) {
+    constructor(origin: number, target: number, speed: number = NORMAL_SPEED) {
         this.origin = origin;
         this.target = target;
         this.fraction = 0;
         this.speed = speed;
     }
+
+    public getScalar(): number {
+        return Scalar.Lerp(this.origin, this.target, this.fraction);
+    }
 }
+
+/* Planet change speed */
+const NORMAL_SPEED = 12;
+const SUDDEN_JUMP = 5;
+
+/* Directions */
+const GETTING_WORSE = -1;
+const WITHOUT_CHANGES = 0;
+const GETTING_BETTER = 1;
+
+/* Levels of planet health */
 const HEALTHY_STATE = 0;
 const GOOD_STATE = 1;
 const INITIAL_STATE = 2;
@@ -25,38 +40,38 @@ const BAD_STATE = 3;
 const REALLY_BAD_STATE = 4;
 
 
-export const STAGES = {
+export const STAGES =
+{
     HEALTHY_STATE: new LerpSizeData(0.1, 1.2),
     GOOD_STATE: new LerpSizeData(1.2, 2),
-    INITIAL_STATE: new LerpSizeData(1, 10),
+    INITIAL_STATE: new LerpSizeData(1, 5),
     BAD_STATE: new LerpSizeData(0.1, 2),
-    REALLY_BAD_STATE: new LerpSizeData(0.1, 2),
+    REALLY_BAD_STATE: new LerpSizeData(0.1, 7),
 }
 
 export class PlanetSystem implements ISystem {
 
     private planet: Planet;
-    private entity: Entity;
+    private currentStage = INITIAL_STATE;
+    private direction: number = WITHOUT_CHANGES;
+    private _stateChanged = false;
+    private eventManager: EventManager;
 
-    constructor(planet: Planet) {
+    constructor(planet: Planet, eventManager: EventManager) {
         this.planet = planet;
-        this.entity = new Entity();
-        this.entity.addComponent(new BoxShape());
-        this.entity.addComponent(new Transform(
-            {position: new Vector3(8, 0, 8),
-            }));
-        this.entity.addComponent(STAGES.INITIAL_STATE);
-        // engine.addEntity(this.entity);
+        this.eventManager = eventManager;
     }
-    
+
 
     update(dt: number) {
-        let transform = this.entity.getComponent(Transform);
-        let lerp = this.entity.getComponent(LerpSizeData);
-        if (lerp.fraction < 1) {
-            let newScale = Scalar.Lerp(lerp.origin, lerp.target, lerp.fraction);
-            transform.scale.setAll(newScale);
-            lerp.fraction += dt / 10;
+        /* Если никаких действий не совершилось, состояние планеты постепенно
+        *  будет либо улучшаться, либо ухудшаться, в зависимости от
+        *  переменной direction  */
+        if (!this._stateChanged) {
+            if (this.direction == GETTING_BETTER)
+                this.getBetter();
+            else if (this.direction == GETTING_WORSE)
+                this.getWorse();
         }
     }
 
@@ -65,7 +80,14 @@ export class PlanetSystem implements ISystem {
     }
 
     private getBetter() {
+    }
 
+    get stateChanged(): boolean {
+        return this._stateChanged;
+    }
+
+    set stateChanged(value: boolean) {
+        this._stateChanged = value;
     }
 }
 
