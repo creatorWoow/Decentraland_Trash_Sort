@@ -1,13 +1,15 @@
-import {MODELS_PATH} from "../core/Constants";
+import {MODELS_PATH, SOUNDS_PATH} from "../core/Constants";
 import {setTimeout} from "@dcl/ecs-scene-utils";
+import {Sound} from "./Sound";
 
 export class Clock extends Entity {
 
     private static CLOCKWORK_ANIMATION = 'Circle.001Action';
 
     /* Время, когда таймер закончится 45 секунд */
-    public static TIMER_DURATION: number = 45000;
+    public static TIMER_DURATION: number = 10000;
     private timer: Entity | undefined;
+    private _clockingSound = new Sound(new AudioClip(SOUNDS_PATH + "/clocking.mp3"), false);
 
     constructor() {
         super();
@@ -33,6 +35,7 @@ export class Clock extends Entity {
     public startTimer(callback: () => void) {
         this.timer = setTimeout(Clock.TIMER_DURATION, callback);
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).play();
+        this._clockingSound.getComponent(AudioSource).playing = true;
     }
 
     /**
@@ -43,6 +46,7 @@ export class Clock extends Entity {
             engine.removeEntity(this.timer);
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).stop();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).reset();
+        this._clockingSound.getComponent(AudioSource).playing = false;
     }
 
     /**
@@ -54,5 +58,6 @@ export class Clock extends Entity {
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).stop();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).reset();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).play();
+        this._clockingSound.getComponent(AudioSource).playing = true;
     }
 }

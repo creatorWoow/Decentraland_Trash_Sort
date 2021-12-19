@@ -2,7 +2,8 @@ import {Planet} from 'src/entities/Planet';
 import * as utils from '@dcl/ecs-scene-utils';
 import {PlayerHand} from './PlayerHand';
 import {Garbage} from './Garbage';
-import {MODELS_PATH} from '../core/Constants';
+import {MODELS_PATH, SOUNDS_PATH} from '../core/Constants';
+import {Sound} from "./Sound";
 
 /**
  * Мусорка определенного типа
@@ -18,6 +19,9 @@ export class GarbageBin extends Entity {
 
     private static garbageBinShape =
         new GLTFShape(MODELS_PATH + '/trashbin.glb');
+    private _successRecyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/success-recycling-sound.wav"), false);
+    private _errorRecyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/error-recycling-sound.wav"), false);
+    private _recyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/bin-working-sound.wav"), false);
     private readonly animator: Animator;
 
 
@@ -77,6 +81,7 @@ export class GarbageBin extends Entity {
      */
     private startRecycling() {
         this.getComponent(Animator).getClip(this.TRASHBIN_BUTTON_ANIM).play()
+        this._recyclingSound.getComponent(AudioSource).playOnce();
     }
 
     private createEnterPoint(playerHand: PlayerHand) {
@@ -110,6 +115,7 @@ export class GarbageBin extends Entity {
         log(`Пользователь неправильно положил мусор с типом ${garbage.type}` +
             `теперь его уровень переработки равен: ${garbage.recycledRate}`);
         this.startRecycling();
+        this._errorRecyclingSound.getComponent(AudioSource).playOnce();
         this.planet.getGarbage(garbage, this.pipe);
         this.getComponent(Animator).getClip(this.TRASHBIN_DENIED_ANIM).play();
     }
@@ -118,6 +124,8 @@ export class GarbageBin extends Entity {
         log(`Пользователь рассортировал мусор с типом ${garbage.type} правильно`)
         garbage.recycledRate = Garbage.BEST_RECYCLED;
         this.startRecycling();
+
+        this._successRecyclingSound.getComponent(AudioSource).playOnce();
         this.planet.getGarbage(garbage, this.pipe);
         this.getComponent(Animator).getClip(this.TRASHBIN_SUCCESS_ANIM).play();
     }

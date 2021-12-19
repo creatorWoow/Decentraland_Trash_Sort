@@ -1,4 +1,5 @@
 import {Planet} from "../entities/Planet";
+import {OnPlanetChangeEvent} from "../core/PlanerChangeProducer";
 
 
 @Component("lerpData")
@@ -24,62 +25,77 @@ export class LerpSizeData {
 }
 
 /* Planet change speed */
-const NORMAL_SPEED = 12;
+const NORMAL_SPEED = 10;
 const SUDDEN_JUMP = 5;
 
-/* Directions */
-const GETTING_WORSE = -1;
-const WITHOUT_CHANGES = 0;
-const GETTING_BETTER = 1;
-
 /* Levels of planet health */
-const HEALTHY_STATE = 0;
 const GOOD_STATE = 1;
 const INITIAL_STATE = 2;
 const BAD_STATE = 3;
 const REALLY_BAD_STATE = 4;
 
-
-export const STAGES =
-{
-    HEALTHY_STATE: new LerpSizeData(0.1, 1.2),
-    GOOD_STATE: new LerpSizeData(1.2, 2),
-    INITIAL_STATE: new LerpSizeData(1, 5),
-    BAD_STATE: new LerpSizeData(0.1, 2),
-    REALLY_BAD_STATE: new LerpSizeData(0.1, 7),
-}
+export const TARGETS: { [key: number]: number } =
+    {
+        1: 0.4,
+        2: 0.5,
+        3: 0.6,
+        4: 0.7,
+    }
 
 export class PlanetSystem implements ISystem {
 
-    private planet: Planet;
-    private currentStage = INITIAL_STATE;
-    private direction: number = WITHOUT_CHANGES;
+    public planet: Planet;
+
+    private speed: number = NORMAL_SPEED;
+    private currentLerp: LerpSizeData | undefined;
+    private stage: number = INITIAL_STATE;
     private _stateChanged = false;
     private eventManager: EventManager;
 
     constructor(planet: Planet, eventManager: EventManager) {
         this.planet = planet;
         this.eventManager = eventManager;
+        this.currentLerp = new LerpSizeData(1, 10, NORMAL_SPEED);
+        this.initPlanetChangeListener();
+    }
+
+    initPlanetChangeListener() {
+        this.eventManager.addListener(OnPlanetChangeEvent, PlanetSystem,
+            ({garbage}) => {
+                log("PlanetSystem перехватил событие изменения планеты")
+                if (garbage.isWorseRecycled()) {
+                    this.stage = Math.min(this.stage + 2, REALLY_BAD_STATE);
+                    this.speed = SUDDEN_JUMP;
+                } else {
+                    this.stage = Math.max(this.stage - 1, GOOD_STATE);
+                    this.speed = NORMAL_SPEED;
+                }
+                this.currentLerp = new LerpSizeData(
+                    this.planet.redPlanet.getComponent(Transform).scale.x,
+                    TARGETS[this.stage], this.speed);
+                this.stateChanged = true;
+            });
     }
 
 
     update(dt: number) {
-        /* Если никаких действий не совершилось, состояние планеты постепенно
-        *  будет либо улучшаться, либо ухудшаться, в зависимости от
-        *  переменной direction  */
-        if (!this._stateChanged) {
-            if (this.direction == GETTING_BETTER)
-                this.getBetter();
-            else if (this.direction == GETTING_WORSE)
-                this.getWorse();
+        if (this.stateChanged) {
+            if (this.currentLerp === undefined)
+                return;
+
+            if (this.currentLerp.fraction < 1) {
+                let newScale = this.currentLerp.getScalar();
+                this.planet.redPlanet.getComponent(Transform).scale.setAll(newScale)
+                this.currentLerp.fraction += dt / this.currentLerp.speed;
+            }
         }
     }
 
-    private getWorse() {
-
-    }
-
-    private getBetter() {
+    public setReallyBadState() {
+        this.currentLerp = new LerpSizeData(
+            this.planet.redPlanet.getComponent(Transform).scale.x,
+            TARGETS[REALLY_BAD_STATE], this.speed);
+        this._stateChanged = true;
     }
 
     get stateChanged(): boolean {
@@ -89,9 +105,4 @@ export class PlanetSystem implements ISystem {
     set stateChanged(value: boolean) {
         this._stateChanged = value;
     }
-}
-
-// a system to carry out the movement
-export class LerpSize implements ISystem {
-
 }

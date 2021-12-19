@@ -3,9 +3,9 @@ import {Garbage} from "../entities/Garbage";
 @EventConstructor()
 export class OnPlanetChangeEvent {
 
-    garbage: Garbage | undefined;
+    garbage: Garbage;
 
-    constructor(garbage?: Garbage) {
+    constructor(garbage: Garbage) {
         log("Создано новое событие");
         this.garbage = garbage;
     }

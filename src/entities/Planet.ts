@@ -2,14 +2,25 @@ import {Garbage} from "./Garbage";
 import {MODELS_PATH} from "../core/Constants";
 import {PlanetChangeProducer} from "../core/PlanerChangeProducer";
 
+/**
+ * Начальные координаты основной планеты
+ */
+const X_INIT_POS = -1;
+const Y_INIT_POS = 0;
+const Z_INIT_POS = -2.7;
+const BIN_DISTANCE = 2.6;
+
+/**
+ * Начальный координаты плохой планеты
+ */
+const X_RED_INIT_POS = 12.15;
+const Y_RED_INIT_POS = 3.55;
+const Z_RED_INIT_POS = 8;
+const RED_INIT_SCALE = 0.5;
+
 export class Planet extends Entity {
 
     public static TUBE_ANIM_NAME = "tubeanim_";
-
-    public static X_INIT_POS = -1;
-    public static Y_INIT_POS = 0;
-    public static Z_INIT_POS = -2.7;
-    public static BIN_DISTANCE = 2.6;
 
 
     planetChangeProducer: PlanetChangeProducer;
@@ -31,11 +42,6 @@ export class Planet extends Entity {
 
         /* Animations */
         const planetAnimator = new Animator()
-        planetAnimator.addClip(new AnimationState('0idle', {looping: false}))
-        planetAnimator.addClip(new AnimationState('-1idle', {looping: false}))
-        planetAnimator.addClip(new AnimationState('f-1to0', {looping: false}))
-        planetAnimator.addClip(new AnimationState('f0to-1', {looping: false}))
-        planetAnimator.addClip(new AnimationState('f0to1', {looping: false}))
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 1, {looping: false}))
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 2, {looping: false}))
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 3, {looping: false}))
@@ -44,7 +50,7 @@ export class Planet extends Entity {
         this.addComponent(new GLTFShape(MODELS_PATH + '/planet.glb'))
         this.addComponent(new Transform({
             position: new Vector3(10, 0, 8),
-            scale: new Vector3(1, 1, 1).scale(0.5)
+            scale: new Vector3(1, 1, 1).scale(RED_INIT_SCALE)
         }));
 
         engine.addEntity(this)
@@ -52,15 +58,12 @@ export class Planet extends Entity {
 
     private initRedPlanet() {
         const redPlanet = new Entity();
-        redPlanet.addComponent(new GLTFShape(MODELS_PATH + '/planet_red.glb'));
+        redPlanet.addComponent(new GLTFShape(MODELS_PATH + '/red_planet2.glb'));
 
         const planetPos = this.getComponent(Transform);
         redPlanet.addComponent(new Transform(
-            {position: new Vector3(
-                    planetPos.position.x,
-                    planetPos.position.y + 2,
-                    planetPos.position.z),
-                scale: new Vector3(1, 1, 1).scale(0.3),
+            {position: new Vector3(X_RED_INIT_POS, Y_RED_INIT_POS, Z_RED_INIT_POS),
+                scale: Vector3.One().scale(RED_INIT_SCALE),
             }
         ));
         engine.addEntity(redPlanet);
@@ -84,9 +87,9 @@ export class Planet extends Entity {
     public getPositionByPipe(pipe: number): Vector3 {
         let pipePosition: Vector3 = this.getComponent(Transform).position
         return new Vector3(
-            pipePosition.x + Planet.X_INIT_POS,
-            pipePosition.y + Planet.Y_INIT_POS,
-            pipePosition.z + Planet.Z_INIT_POS + (Planet.BIN_DISTANCE * (2 - pipe)));
+            pipePosition.x + X_INIT_POS,
+            pipePosition.y + Y_INIT_POS,
+            pipePosition.z + Z_INIT_POS + (BIN_DISTANCE * (2 - pipe)));
     }
 
     public playPipeAnimation(pipeIndex: number) {
@@ -99,5 +102,9 @@ export class Planet extends Entity {
 
     set redPlanet(value: Entity) {
         this._redPlanet = value;
+    }
+
+    public resetRedPlanet() {
+        this.redPlanet.getComponent(Transform).scale.setAll(RED_INIT_SCALE);
     }
 }
