@@ -1,7 +1,7 @@
 {
   "name": "dcl-project",
   "version": "1.0.0",
-  "description": "My new Decentraland project",
+  "description": "Trash sort game",
   "scripts": {
     "start": "dcl start",
     "build": "build-ecs",
