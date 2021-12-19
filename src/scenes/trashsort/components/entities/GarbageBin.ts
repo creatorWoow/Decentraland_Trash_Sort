@@ -1,9 +1,8 @@
-import {Planet} from 'src/entities/Planet';
+import {Planet} from 'src/scenes/trashsort/components/entities/Planet';
 import * as utils from '@dcl/ecs-scene-utils';
 import {PlayerHand} from './PlayerHand';
 import {Garbage} from './Garbage';
-import {MODELS_PATH, SOUNDS_PATH} from '../core/Constants';
-import {Sound} from "./Sound";
+import resources from "../../resources";
 
 /**
  * Мусорка определенного типа
@@ -18,10 +17,10 @@ export class GarbageBin extends Entity {
     TRASHBIN_DENIED_ANIM = "denied_anim";
 
     private static garbageBinShape =
-        new GLTFShape(MODELS_PATH + '/trashbin.glb');
-    private _successRecyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/success-recycling-sound.wav"), false);
-    private _errorRecyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/error-recycling-sound.wav"), false);
-    private _recyclingSound = new Sound(new AudioClip(SOUNDS_PATH + "/bin-working-sound.wav"), false);
+        new GLTFShape(resources.models.garbageBin);
+    private _successRecyclingSound = resources.sounds.garbageBin.successRecyclingSound;
+    private _errorRecyclingSound = resources.sounds.garbageBin.errorRecyclingSound;
+    private _recyclingSound = resources.sounds.garbageBin.recyclingSound;
     private readonly animator: Animator;
 
 

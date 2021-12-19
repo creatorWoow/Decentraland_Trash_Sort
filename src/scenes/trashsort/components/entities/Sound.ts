@@ -1,3 +1,6 @@
+/**
+ * Класс-обертка над классом AudioSource из sdk децентраленда
+ */
 export class Sound extends Entity {
     constructor(audio: AudioClip, loop: boolean, transform?: Vector3) {
         super()
@@ -10,14 +13,5 @@ export class Sound extends Entity {
         } else {
             this.getComponent(Transform).position = Camera.instance.position
         }
-    }
-
-    playAudioOnceAtPosition(transform: Vector3): void {
-        this.getComponent(Transform).position = transform
-        this.getComponent(AudioSource).playOnce()
-    }
-
-    playAudioAtPosition(transform: Vector3): void {
-        // this.getComponent(Transform).position = transform   this.getComponent(AudioSource).playing = true
     }
 }

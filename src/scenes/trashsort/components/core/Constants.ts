@@ -1,6 +1,6 @@
-export const MODELS_PATH = 'src/assets/models';
-export const SOUNDS_PATH = 'src/assets/sounds';
-export const IMAGES_PATH = 'src/assets/images';
+export const MODELS_PATH = 'models';
+export const SOUNDS_PATH = 'sounds';
+export const IMAGES_PATH = 'images';
 
 export const GARBAGE_SHAPES : {[key: string]: CANNON.Shape} = {
     "plastic_1.glb" : new CANNON.Cylinder(0.115, 0.1, 0.486, 28),

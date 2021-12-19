@@ -1,7 +1,6 @@
 import {Planet} from "../entities/Planet";
 import {OnPlanetChangeEvent} from "../core/PlanerChangeProducer";
 
-
 @Component("lerpData")
 export class LerpSizeData {
 

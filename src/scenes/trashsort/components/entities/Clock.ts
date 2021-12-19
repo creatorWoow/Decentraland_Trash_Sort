@@ -1,15 +1,14 @@
-import {MODELS_PATH, SOUNDS_PATH} from "../core/Constants";
 import {setTimeout} from "@dcl/ecs-scene-utils";
-import {Sound} from "./Sound";
+import resources from "../../resources";
 
 export class Clock extends Entity {
 
     private static CLOCKWORK_ANIMATION = 'Circle.001Action';
 
     /* Время, когда таймер закончится 45 секунд */
-    public static TIMER_DURATION: number = 10000;
+    public static TIMER_DURATION: number = 45000;
     private timer: Entity | undefined;
-    private _clockingSound = new Sound(new AudioClip(SOUNDS_PATH + "/clocking.mp3"), false);
+    private _clockingSound = resources.sounds.clock;
 
     constructor() {
         super();
@@ -17,7 +16,7 @@ export class Clock extends Entity {
     }
 
     private initEntity(): void {
-        this.addComponent(new GLTFShape(MODELS_PATH + "/clockwork.glb"));
+        this.addComponent(new GLTFShape(resources.models.clock));
         this.initAnimation();
         engine.addEntity(this);
     }

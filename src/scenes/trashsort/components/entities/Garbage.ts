@@ -1,12 +1,10 @@
 import {PlayerHand} from './PlayerHand';
-import {Sound} from './Sound';
-import {GARBAGE_SHAPES, MODELS_PATH, SOUNDS_PATH} from '../core/Constants';
+import {GARBAGE_SHAPES, MODELS_PATH} from '../core/Constants';
 import {PhysicalWorld} from './PhysicalWorld';
+import resources from "../../resources";
 
-const pickUpSound = new Sound(
-    new AudioClip(SOUNDS_PATH + '/pickup.mp3'), false);
-const cantPickUpSound = new Sound(
-    new AudioClip(SOUNDS_PATH + '/cant_pickup.mp3'), false);
+const pickUpSound = resources.sounds.garbage.pickup;
+const cantPickUpSound = resources.sounds.garbage.cantPickUp;
 
 export const GARBAGE_GROUP_NAME = 'Garbage';
 export const ACTIVE_GARBAGE_COMPONENT = "ActiveGarbage";
@@ -173,7 +171,7 @@ export class Garbage extends Entity {
     }
 
     /**
-     * Проигрывает анимацию поднятия банки с земли
+     * Проигрывает анимацию мусора с земли
      */
     playPickUpAnim() {
         this.getComponent(GLTFShape).visible = true;

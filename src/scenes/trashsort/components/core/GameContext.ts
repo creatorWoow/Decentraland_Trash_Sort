@@ -2,11 +2,10 @@ import {Garbage, GARBAGE_GROUP_NAME} from "../entities/Garbage";
 import {Clock} from "../entities/Clock";
 import {GarbageGenerator} from "./GarbageGenerator";
 import {OnPlanetChangeEvent} from "./PlanerChangeProducer";
-import {SOUNDS_PATH} from "./Constants";
-import {Sound} from "../entities/Sound";
 import {PlanetSystem} from "../systems/PlanetSystem";
 import {PlayerHand} from "../entities/PlayerHand";
 import * as ui from '@dcl/ui-scene-utils';
+import resources from "../../resources";
 
 export const GAME_CONTEXT_COMPONENT_NAME = "GameContextComponent"
 export const GAME_CONTEXT_NAME = "GameContext"
@@ -20,7 +19,6 @@ class GameContextComponent {
 }
 
 export class GameContext extends Entity {
-    private _score: number;
     private _started: boolean;
     private garbage: Array<Garbage>;
     private planetSystem: PlanetSystem;
@@ -29,10 +27,8 @@ export class GameContext extends Entity {
     private playerHand: PlayerHand;
     private garbageGenerator: GarbageGenerator;
 
-    private _successGameEndingSound =
-        new Sound(new AudioClip(SOUNDS_PATH + "/success-game-end.wav"), false);
-    private _loseGameEndingSound =
-        new Sound(new AudioClip(SOUNDS_PATH + "/lose-game-ending.mp3"), false);
+    private _successGameEndingSound = resources.sounds.game.successGameEndingSound;
+    private _loseGameEndingSound = resources.sounds.game.loseGameEndingSound;
 
 
     constructor(garbageGenerator: GarbageGenerator,
@@ -40,7 +36,6 @@ export class GameContext extends Entity {
                 planetSystem: PlanetSystem,
                 playerHand: PlayerHand) {
         super();
-        this._score = 0;
         this.clock = new Clock();
         this._started = false;
         this.playerHand = playerHand;
@@ -118,10 +113,12 @@ export class GameContext extends Entity {
         if (activeGarbageCount > 0) {
             this._loseGameEndingSound.getComponent(AudioSource).playOnce();
             this.planetSystem.setReallyBadState();
-            ui.displayAnnouncement('The planet has suffered :(', 3, new Color4(255, 255, 255, 50));
+            ui.displayAnnouncement('The planet has suffered :(',
+                3, new Color4(255, 255, 255, 50));
             log("Вы не успели спасти планету, попробуте еще раз");
         } else {
-            ui.displayAnnouncement('The planet was saved, hurray!', 3, new Color4(255, 255, 255, 50));
+            ui.displayAnnouncement('The planet was saved, hurray!',
+                3, new Color4(255, 255, 255, 50));
             this._successGameEndingSound.getComponent(AudioSource).playOnce();
             log("Планета была спасена, ура");
         }
@@ -182,19 +179,6 @@ export class GameContext extends Entity {
             }
         }
         return discardedGarbage;
-    }
-
-    get score()
-        :
-        number {
-        return this._score;
-    }
-
-    set score(value
-                  :
-                  number
-    ) {
-        this._score = value;
     }
 
 }

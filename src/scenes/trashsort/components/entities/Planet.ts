@@ -1,6 +1,6 @@
 import {Garbage} from "./Garbage";
-import {MODELS_PATH} from "../core/Constants";
 import {PlanetChangeProducer} from "../core/PlanerChangeProducer";
+import resources from "../../resources";
 
 /**
  * Начальные координаты основной планеты
@@ -21,7 +21,6 @@ const RED_INIT_SCALE = 0.5;
 export class Planet extends Entity {
 
     public static TUBE_ANIM_NAME = "tubeanim_";
-
 
     planetChangeProducer: PlanetChangeProducer;
 
@@ -47,7 +46,7 @@ export class Planet extends Entity {
         planetAnimator.addClip(new AnimationState(Planet.TUBE_ANIM_NAME + 3, {looping: false}))
 
         this.addComponent(planetAnimator);
-        this.addComponent(new GLTFShape(MODELS_PATH + '/planet.glb'))
+        this.addComponent(new GLTFShape(resources.models.planet.main));
         this.addComponent(new Transform({
             position: new Vector3(10, 0, 8),
             scale: new Vector3(1, 1, 1).scale(RED_INIT_SCALE)
@@ -58,9 +57,8 @@ export class Planet extends Entity {
 
     private initRedPlanet() {
         const redPlanet = new Entity();
-        redPlanet.addComponent(new GLTFShape(MODELS_PATH + '/red_planet2.glb'));
-
-        const planetPos = this.getComponent(Transform);
+        redPlanet.addComponent(new GLTFShape(resources.models.planet.red));
+        this.getComponent(Transform);
         redPlanet.addComponent(new Transform(
             {position: new Vector3(X_RED_INIT_POS, Y_RED_INIT_POS, Z_RED_INIT_POS),
                 scale: Vector3.One().scale(RED_INIT_SCALE),

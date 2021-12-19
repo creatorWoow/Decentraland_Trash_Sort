@@ -1,8 +1,8 @@
 import {NPC, NPCDelay} from '@dcl/npc-scene-utils'
-import resources from './resources'
-import {AliceDialog} from 'dialogData'
+import {AliceDialog} from 'src/scenes/trashsort/components/npc/dialogData'
 import {IMAGES_PATH} from "../core/Constants";
 import {setTimeout} from "@dcl/ecs-scene-utils";
+import resources from "../../resources";
 
 // Alice
 export function createAlice(): NPC {

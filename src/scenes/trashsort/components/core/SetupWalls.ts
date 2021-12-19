@@ -1,7 +1,6 @@
 export function setupWalls(cannonWorld: CANNON.World): void {
 
     // Invisible walls
-    //#region
     const wallShape = new CANNON.Box(new CANNON.Vec3(8, 32, 0.5))
     const wallNorth = new CANNON.Body({
         mass: 0,
@@ -32,8 +31,5 @@ export function setupWalls(cannonWorld: CANNON.World): void {
     })
     wallEast.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI / 2)
     cannonWorld.addBody(wallEast)
-    //#endregion
-
-
     //#endregion
 }

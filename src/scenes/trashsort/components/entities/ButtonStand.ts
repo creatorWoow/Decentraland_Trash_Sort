@@ -1,8 +1,7 @@
 import * as utils from '@dcl/ecs-scene-utils';
 import {Delay} from '@dcl/ecs-scene-utils';
-import {MODELS_PATH, SOUNDS_PATH} from '../core/Constants';
 import {CoolDown, GameContext} from "../core/GameContext";
-import {Sound} from "./Sound";
+import resources from "../../resources";
 
 const BUTTON_ACTION_NAME = 'Button_Action';
 
@@ -13,7 +12,7 @@ const BUTTON_ACTION_NAME = 'Button_Action';
 export class ButtonStand {
   private stand: Entity;
   private button: Entity;
-  private _clickSound = new Sound(new AudioClip(SOUNDS_PATH + "/button-click.mp3"), false);
+  private _clickSound = resources.sounds.buttonClick;
   /**
      * Создает стенд с кнопкой
      */
@@ -49,7 +48,7 @@ export class ButtonStand {
     const button = new Entity();
 
     const standPosition: Vector3 = this.stand.getComponent(Transform).position;
-    button.addComponent(new GLTFShape(MODELS_PATH + '/button.glb'));
+    button.addComponent(new GLTFShape(resources.models.button));
     button.addComponent(new Transform({
       position: new Vector3(
           standPosition.x,

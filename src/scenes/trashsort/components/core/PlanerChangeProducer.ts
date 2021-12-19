@@ -6,7 +6,6 @@ export class OnPlanetChangeEvent {
     garbage: Garbage;
 
     constructor(garbage: Garbage) {
-        log("Создано новое событие");
         this.garbage = garbage;
     }
 }
