@@ -36,6 +36,7 @@ export default {
             main: MODELS_PATH + '/planet.glb',
             red: MODELS_PATH + '/red_planet.glb',
         },
+        likeHeath: MODELS_PATH + 'heart.glb',
         scene: MODELS_PATH + '/scene.glb',
     },
     textures: {
@@ -45,4 +46,5 @@ export default {
         leftClickIcon: new Texture(IMAGES_PATH + '/ui/leftClickIcon.png'),
         textPanel: new Texture(IMAGES_PATH + '/ui/textPanel.png'),
     },
+    sceneId: "61b906c4dd08def8380ababf"
 }

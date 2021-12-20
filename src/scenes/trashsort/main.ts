@@ -10,6 +10,7 @@ import {GameContext} from "./components/core/GameContext";
 import {PlanetSystem} from "./components/systems/PlanetSystem";
 import {setupWalls} from "./components/core/SetupWalls";
 import {createAlice} from "./components/npc/Alice";
+import {LikeMeter} from "./components/entities/LikeMeter";
 
 
 export function createTrashSort(): void {
@@ -30,16 +31,8 @@ export function createTrashSort(): void {
     engine.addSystem(new GarbagePhysicsSystem(physicalWorld.world));
     engine.addEntity(new GameContext(garbageGenerator, eventManager,
         planetSystem, playerHand));
-
     setupWalls(physicalWorld.world);
-
-    class RotatorSystem implements ISystem {
-        update(dt: number) {
-            planet.redPlanet.getComponent(Transform).rotate(Vector3.Down(), 2);
-        }
-    }
-
-    engine.addSystem(new RotatorSystem());
+    LikeMeter.init();
     createAlice();
 }
 

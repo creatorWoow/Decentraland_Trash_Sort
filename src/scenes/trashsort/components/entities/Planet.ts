@@ -64,6 +64,13 @@ export class Planet extends Entity {
                 scale: Vector3.One().scale(RED_INIT_SCALE),
             }
         ));
+        class RotatorSystem implements ISystem {
+            update(dt: number) {
+                redPlanet.getComponent(Transform).rotate(Vector3.Down(), 2);
+            }
+        }
+
+        engine.addSystem(new RotatorSystem());
         engine.addEntity(redPlanet);
         return redPlanet;
     }
