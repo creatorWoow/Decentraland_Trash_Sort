@@ -12,8 +12,9 @@ export class LikeMeter extends Entity {
         super()
         engine.addEntity(this)
 
-        this.addComponent(new GLTFShape(resources.models.likeHeath))
+        this.addComponent(new GLTFShape(resources.models.likeHeart))
         this.addComponent(new Transform(transform))
+        this.addComponent(new Billboard(false, true, false));
 
         // Like counter
         const likeCount = new Entity()
@@ -56,7 +57,7 @@ export class LikeMeter extends Entity {
                             let url = server + scene_id + '/update'
                             let response = await fetch(url, {
                                 method: 'PUT',
-                                headers: {'Content-Type': 'application/json'},
+                                headers: {'Content-Type': 'plain/text'},
                             })
                             return response.json()
                         } catch (e: any) {
@@ -88,10 +89,11 @@ export class LikeMeter extends Entity {
     public static init() : LikeMeter {
         return new LikeMeter(
             {
-                position: new Vector3(8, 0.75, 8),
-                rotation: Quaternion.Euler(0, 0, 0),
+                position: new Vector3(3, 0.7, 12),
+                rotation: Quaternion.Euler(0, 180, 0),
             },
-            resources.sceneId
+            resources.sceneId,
+            true
         )
     }
 }

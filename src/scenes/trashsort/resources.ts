@@ -7,7 +7,7 @@ import {Sound} from "./components/entities/Sound";
 
 export default {
     sounds: {
-        alice: new AudioClip(SOUNDS_PATH + '/robots/alice.mp3'),
+        monitor: new AudioClip(SOUNDS_PATH + '/robots/alice.mp3'),
         clock: new Sound(new AudioClip(SOUNDS_PATH + "/clocking.mp3"), false),
         buttonClick: new Sound(new AudioClip(SOUNDS_PATH + "/button-click.mp3"), false),
         garbage: {
@@ -25,9 +25,8 @@ export default {
         },
     },
     models: {
-        robots: {
-            alice: MODELS_PATH + '/robots/alice.glb',
-            rings: new GLTFShape(MODELS_PATH + '/robots/rings.glb'),
+        npc: {
+            monitor: MODELS_PATH + '/monitor.glb'
         },
         button: MODELS_PATH + "/button.glb",
         clock: MODELS_PATH + "/clockwork.glb",
@@ -36,7 +35,7 @@ export default {
             main: MODELS_PATH + '/planet.glb',
             red: MODELS_PATH + '/red_planet.glb',
         },
-        likeHeath: MODELS_PATH + 'heart.glb',
+        likeHeart: MODELS_PATH + '/heart.glb',
         scene: MODELS_PATH + '/scene.glb',
     },
     textures: {

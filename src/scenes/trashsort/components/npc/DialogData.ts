@@ -1,6 +1,6 @@
 import {Dialog} from '@dcl/npc-scene-utils'
 
-export const AliceDialog: Dialog[] = [
+export const NPCDialog: Dialog[] = [
   {
     text: "Hi, we are codepower team",
   },

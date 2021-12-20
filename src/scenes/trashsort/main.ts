@@ -9,7 +9,7 @@ import {initMainScene} from "./components/core/StaticComponents";
 import {GameContext} from "./components/core/GameContext";
 import {PlanetSystem} from "./components/systems/PlanetSystem";
 import {setupWalls} from "./components/core/SetupWalls";
-import {createAlice} from "./components/npc/Alice";
+import {createNPC} from "./components/npc/MetaEcologyRobot";
 import {LikeMeter} from "./components/entities/LikeMeter";
 
 
@@ -33,7 +33,7 @@ export function createTrashSort(): void {
         planetSystem, playerHand));
     setupWalls(physicalWorld.world);
     LikeMeter.init();
-    createAlice();
+    createNPC();
 }
 
 
