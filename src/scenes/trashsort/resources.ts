@@ -39,6 +39,7 @@ export default {
         scene: MODELS_PATH + '/scene.glb',
     },
     textures: {
+        monitorPortrait: IMAGES_PATH + '/portraits/monitor.png',
         blank: new Texture(IMAGES_PATH + '/ui/blank.png'),
         buttonE: new Texture(IMAGES_PATH + '/ui/buttonE.png'),
         buttonF: new Texture(IMAGES_PATH + '/ui/buttonF.png'),

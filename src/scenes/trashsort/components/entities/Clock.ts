@@ -1,5 +1,6 @@
 import {setTimeout} from "@dcl/ecs-scene-utils";
 import resources from "../../resources";
+import {OFFSET_VECTOR} from "../core/Constants";
 
 export class Clock extends Entity {
 
@@ -17,6 +18,8 @@ export class Clock extends Entity {
 
     private initEntity(): void {
         this.addComponent(new GLTFShape(resources.models.clock));
+        this.addComponent(new Transform({position :
+                Vector3.Zero().add(OFFSET_VECTOR)}))
         this.initAnimation();
         engine.addEntity(this);
     }
@@ -54,6 +57,7 @@ export class Clock extends Entity {
     public resetTimer() {
         if (this.timer !== undefined)
             engine.removeEntity(this.timer);
+        this.getComponent(AudioSource).playing = false;
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).stop();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).reset();
         this.getComponent(Animator).getClip(Clock.CLOCKWORK_ANIMATION).play();

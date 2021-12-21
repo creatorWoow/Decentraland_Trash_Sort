@@ -1,7 +1,7 @@
 import {PlayerHand} from '../entities/PlayerHand';
 import {Garbage} from "../entities/Garbage";
 import {PhysicalWorld} from "../entities/PhysicalWorld";
-import {GARBAGE_MODELS, GARBAGE_SHAPES} from "./Constants";
+import {GARBAGE_MODELS, GARBAGE_SHAPES, OFFSET_VECTOR} from "./Constants";
 
 export class GarbageGenerator {
 
@@ -36,7 +36,7 @@ export class GarbageGenerator {
                 new Vector3(
                     GarbageGenerator.INITIAL_X_POS + Math.random() * GarbageGenerator.HORIZONTAL_DISTANCE,
                     GarbageGenerator.INITIAL_Y_POS + i * GarbageGenerator.VERTICAL_DISTANCE,
-                    GarbageGenerator.INITIAL_Z_POS + Math.random()),
+                    GarbageGenerator.INITIAL_Z_POS + Math.random()).add(OFFSET_VECTOR),
                 this._world));
         }
         return this._props;

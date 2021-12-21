@@ -1,8 +1,8 @@
 import {NPC} from '@dcl/npc-scene-utils'
 import {NPCDialog} from 'src/scenes/trashsort/components/npc/DialogData'
-import {IMAGES_PATH} from "../core/Constants";
 import {setTimeout} from "@dcl/ecs-scene-utils";
 import resources from "../../resources";
+import {OFFSET_VECTOR} from "../core/Constants";
 
 // Monitor
 export function createNPC(): NPC {
@@ -10,7 +10,7 @@ export function createNPC(): NPC {
     let dialogWasEnded = false;
     const npc = new NPC(
         {
-            position: new Vector3(5, 0, 12),
+            position: new Vector3(5, 0, 12).add(OFFSET_VECTOR),
             rotation: Quaternion.Euler(0, -90, 0),
             scale: Vector3.One().scale(0.7)
         },
@@ -36,7 +36,7 @@ export function createNPC(): NPC {
         {
             faceUser: false,
             portrait: {
-                path: IMAGES_PATH + '/portraits/monitor.png',
+                path: resources.textures.monitorPortrait,
                 height: 256,
                 width: 256,
                 section: {

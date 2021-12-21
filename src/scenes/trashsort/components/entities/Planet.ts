@@ -1,6 +1,7 @@
 import {Garbage} from "./Garbage";
 import {PlanetChangeProducer} from "../core/PlanerChangeProducer";
 import resources from "../../resources";
+import {OFFSET_VECTOR} from "../core/Constants";
 
 /**
  * Начальные координаты основной планеты
@@ -48,7 +49,7 @@ export class Planet extends Entity {
         this.addComponent(planetAnimator);
         this.addComponent(new GLTFShape(resources.models.planet.main));
         this.addComponent(new Transform({
-            position: new Vector3(10, 0, 8),
+            position: new Vector3(10, 0, 8).add(OFFSET_VECTOR),
             scale: new Vector3(1, 1, 1).scale(RED_INIT_SCALE)
         }));
 
@@ -58,9 +59,8 @@ export class Planet extends Entity {
     private initRedPlanet() {
         const redPlanet = new Entity();
         redPlanet.addComponent(new GLTFShape(resources.models.planet.red));
-        this.getComponent(Transform);
         redPlanet.addComponent(new Transform(
-            {position: new Vector3(X_RED_INIT_POS, Y_RED_INIT_POS, Z_RED_INIT_POS),
+            {position: new Vector3(X_RED_INIT_POS, Y_RED_INIT_POS, Z_RED_INIT_POS).add(OFFSET_VECTOR),
                 scale: Vector3.One().scale(RED_INIT_SCALE),
             }
         ));

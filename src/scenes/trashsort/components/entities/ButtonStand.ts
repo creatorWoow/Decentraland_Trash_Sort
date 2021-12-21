@@ -2,6 +2,7 @@ import * as utils from '@dcl/ecs-scene-utils';
 import {Delay} from '@dcl/ecs-scene-utils';
 import {CoolDown, GameContext} from "../core/GameContext";
 import resources from "../../resources";
+import {OFFSET_VECTOR} from "../core/Constants";
 
 const BUTTON_ACTION_NAME = 'Button_Action';
 
@@ -33,7 +34,7 @@ export class ButtonStand {
     const buttonStand = new Entity();
     buttonStand.addComponent(new BoxShape());
     buttonStand.addComponent(new Transform({
-      position: new Vector3(4, 0, 4),
+      position: new Vector3(4, 0, 4).add(OFFSET_VECTOR),
       scale: new Vector3(0.5, 2.3, 0.5).scale(1.2),
     }).rotate(new Vector3(1, 0, 0), 10));
     engine.addEntity(buttonStand);

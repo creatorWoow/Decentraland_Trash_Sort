@@ -1,4 +1,5 @@
 import resources from "../../resources";
+import {OFFSET_VECTOR} from "../core/Constants";
 
 const sceneMessageBus = new MessageBus()
 const server = 'https://art-fest-server.herokuapp.com/scenes/'
@@ -89,7 +90,7 @@ export class LikeMeter extends Entity {
     public static init() : LikeMeter {
         return new LikeMeter(
             {
-                position: new Vector3(3, 0.7, 12),
+                position: new Vector3(3, 0.7, 12).add(OFFSET_VECTOR),
                 rotation: Quaternion.Euler(0, 180, 0),
             },
             resources.sceneId,

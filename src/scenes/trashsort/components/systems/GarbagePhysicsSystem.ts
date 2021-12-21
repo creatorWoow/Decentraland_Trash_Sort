@@ -28,9 +28,11 @@ export class GarbagePhysicsSystem implements ISystem {
      */
     onRemoveEntity(entity: IEntity) {
         if (entity instanceof Garbage) {
+            log("Попытка удалить мусор из системы")
             const index = this.garbageOnFloor.indexOf(entity);
             if (index > -1) {
                 log("Из GarbagePhysicsSystem был удален мусор: " + entity.toString());
+                log("Текущий размер garbageOnFloor: ", this.garbageOnFloor.length);
                 this.garbageOnFloor.splice(index);
             }
         }
