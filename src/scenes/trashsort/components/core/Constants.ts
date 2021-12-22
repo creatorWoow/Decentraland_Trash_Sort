@@ -1,6 +1,6 @@
-export const MODELS_PATH = 'models';
-export const SOUNDS_PATH = 'sounds';
-export const IMAGES_PATH = 'images';
+export const MODELS_PATH = 'models/trashsort';
+export const SOUNDS_PATH = 'sounds/trashsort';
+export const IMAGES_PATH = 'images/trashsort';
 
 export const OFFSET_X = 80;
 export const OFFSET_Z = 64;
