@@ -14,7 +14,7 @@ export class GarbageBin extends Entity {
     TRASHBIN_PIPE_ANIM = "trashbin_work3";
     TRASHBIN_BUTTON_ANIM = "buttonanim";
     TRASHBIN_SUCCESS_ANIM = "success_anim";
-    TRASHBIN_DENIED_ANIM = "denied_anim";
+    TRASHBIN_DENIED_ANIM = "denied_anim.001";
 
     private static garbageBinShape =
         new GLTFShape(resources.models.garbageBin);
