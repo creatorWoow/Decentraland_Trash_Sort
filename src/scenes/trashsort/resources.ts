@@ -7,7 +7,7 @@ import {Sound} from "./components/entities/Sound";
 
 export default {
     sounds: {
-        monitor: new AudioClip(SOUNDS_PATH + '/robots/alice.mp3'),
+        monitor: new AudioClip(SOUNDS_PATH + '/monitor.mp3'),
         clock: new Sound(new AudioClip(SOUNDS_PATH + "/clocking.mp3"), false),
         buttonClick: new Sound(new AudioClip(SOUNDS_PATH + "/button-click.mp3"), false),
         garbage: {
