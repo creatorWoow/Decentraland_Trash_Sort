@@ -79,7 +79,7 @@ export class Planet extends Entity {
     public getGarbage(garbage: Garbage, pipeIndex: number): void {
 
         log(`В планету попал мусор: ${garbage.toString()}`);
-        engine.removeEntity(garbage);
+        garbage.disable();
         /* Объясните, пожалуйста, почему это не работает???? */
         // this.eventManager?.fireEvent(new OnPlanetChangeEvent(garbage));
         /* а это работает */

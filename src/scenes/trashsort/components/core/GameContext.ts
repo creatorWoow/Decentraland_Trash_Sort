@@ -20,7 +20,7 @@ class GameContextComponent {
 
 export class GameContext extends Entity {
     private _started: boolean;
-    private garbage: Array<Garbage>;
+    private activeProps: Array<Garbage>;
     private planetSystem: PlanetSystem;
 
     private clock: Clock;
@@ -44,7 +44,7 @@ export class GameContext extends Entity {
         this.addComponent(new GameContextComponent());
         this.initPlanetChangeListener();
         this.planetSystem = planetSystem;
-        this.garbage = this.garbageGenerator.generateGarbage();
+        this.activeProps = this.garbageGenerator.generateGarbage();
     }
 
     public startGame() {
@@ -55,11 +55,11 @@ export class GameContext extends Entity {
         this.planetSystem.planet.resetRedPlanet();
         this.planetSystem.stateChanged = false;
 
-        if (this.getActiveGarbageQuantity() == 0)
-            this.garbage = this.garbageGenerator.generateGarbage();
+        if (this.activeProps.length === 0)
+            this.activeProps = this.garbageGenerator.generateGarbage();
 
         this._started = true;
-        this.garbage.forEach(e => e.enable());
+        this.activeProps.forEach(e => e.enable());
         this.clock.startTimer(() => {
                 this.endGame();
                 log('TIMER GOT OUT')
@@ -69,9 +69,10 @@ export class GameContext extends Entity {
 
     resetGame() {
         this._started = false;
-        this.playerHand.clearHand();
         this.clock.stopTimer();
         this.deleteAllGarbage();
+        this.garbageGenerator.resetBuffer();
+        this.playerHand.clearHand();
     }
 
     /**
@@ -131,16 +132,15 @@ export class GameContext extends Entity {
         const garbage: Record<string, Garbage> =
             engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
         for (let prop in garbage) {
-            engine.removeEntity(garbage[prop]);
+            garbage[prop].disable();
         }
+        this.activeProps = []
     }
 
     /**
      * Возвращает singleton игрового контекста
      */
-    public static getGameContext()
-        :
-        GameContext {
+    public static getGameContext(): GameContext {
         const context = engine.getEntitiesWithComponent(GAME_CONTEXT_COMPONENT_NAME)
         const key = Object.keys(context)[0];
         return context[key];
@@ -151,13 +151,15 @@ export class GameContext extends Entity {
      * (этот мусор еще не выброшен).
      * @return {number} количество мусора на сцене
      */
-    public getActiveGarbageQuantity()
-        :
-        number {
-        const garbageQuantity =
-            Object.keys(engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME)).length;
-        log(`Активное количество мусора: ${garbageQuantity}`);
-        return garbageQuantity;
+    public getActiveGarbageQuantity(): number {
+        const props = engine.getEntitiesWithComponent(GARBAGE_GROUP_NAME);
+        let len = 0;
+        for(let key in props) {
+            if (props[key].isActive)
+                len += 1;
+        }
+        log(`Активное количество мусора: ${len}`);
+        return len;
     }
 
     /**

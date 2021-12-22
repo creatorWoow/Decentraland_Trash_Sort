@@ -9,8 +9,8 @@ export class GarbagePhysicsSystem implements ISystem {
     garbageOnFloor: Array<Garbage>;
     world: CANNON.World;
 
-    constructor(world: CANNON.World) {
-        this.garbageOnFloor = [];
+    constructor(world: CANNON.World, garbage: Array<Garbage>) {
+        this.garbageOnFloor = garbage;
         this.world = world;
     }
 

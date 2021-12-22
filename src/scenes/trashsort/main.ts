@@ -26,9 +26,10 @@ export function createTrashSort(): void {
     GarbageBin.init(playerHand, planet);
     ButtonStand.init();
 
-    const planetSystem = new PlanetSystem(planet, eventManager)
+    const planetSystem = new PlanetSystem(planet, eventManager);
     engine.addSystem(planetSystem);
-    engine.addSystem(new GarbagePhysicsSystem(physicalWorld.world));
+    engine.addSystem(new GarbagePhysicsSystem(physicalWorld.world,
+        garbageGenerator.allCreatedProps));
     engine.addEntity(new GameContext(garbageGenerator, eventManager,
         planetSystem, playerHand));
     setupWalls(physicalWorld.world);

@@ -2,6 +2,7 @@ import {PlayerHand} from './PlayerHand';
 import {GARBAGE_SHAPES, MODELS_PATH} from '../core/Constants';
 import {PhysicalWorld} from './PhysicalWorld';
 import resources from "../../resources";
+import {GarbageGenerator} from "../core/GarbageGenerator";
 
 const pickUpSound = resources.sounds.garbage.pickup;
 const cantPickUpSound = resources.sounds.garbage.cantPickUp;
@@ -37,6 +38,7 @@ export class Garbage extends Entity {
 
     initialPosition: Vector3;
     currentPosition: Vector3;
+    garbageGenerator: GarbageGenerator;
 
     /**
      * Создает объект мусора
@@ -50,7 +52,8 @@ export class Garbage extends Entity {
         modelFilename: string,
         playerHand: PlayerHand,
         position: Vector3,
-        physicsWorld: PhysicalWorld) {
+        physicsWorld: PhysicalWorld,
+        garbageGenerator: GarbageGenerator) {
         super();
 
         this.world = physicsWorld.world;
@@ -58,6 +61,7 @@ export class Garbage extends Entity {
         this._type = modelFilename.split('_')[0];
         this._recycledRate = 1;
         this.playerHand = playerHand;
+        this.garbageGenerator = garbageGenerator;
         this.initialPosition = new Vector3(position.x, position.y, position.z);
         this.currentPosition = new Vector3(position.x, position.y, position.z);
 
@@ -129,6 +133,7 @@ export class Garbage extends Entity {
      */
     public enable(): void {
         this.body.wakeUp();
+        this.isEnabled = false;
         this.isActive = true;
         this.getComponent(GLTFShape).visible = true;
     }
@@ -137,9 +142,11 @@ export class Garbage extends Entity {
      * Делает объект невидимым
      */
     public disable(): void {
+        if (!this.isActive)
+            return;
         this.body.sleep();
         this.isActive = false;
-        this.isEnabled = false;
+        this.isEnabled = true;
         this.setParent(null);
         this.toggleOnPointerDown(true);
         this.getComponent(GLTFShape).visible = false;
@@ -148,7 +155,12 @@ export class Garbage extends Entity {
         this.body.position.set(
             this.initialPosition.x,
             this.initialPosition.y,
+            this.initialPosition.z);
+        this.getComponent(Transform).position.set(
+            this.initialPosition.x,
+            this.initialPosition.y,
             this.initialPosition.z)
+        this.garbageGenerator.returnToBuffer(this);
     }
 
     toggleOnPointerDown(isOn: boolean): void {
