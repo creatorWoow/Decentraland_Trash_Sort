@@ -122,8 +122,8 @@ export class Garbage extends Entity {
             Camera.instance.position.y,
             Camera.instance.position.z,
         );
-        this.setParent(Attachable.FIRST_PERSON_CAMERA);
-        this.getComponent(Transform).position.set(0, -0.2, 0.5);
+        this.setParent(Attachable.AVATAR);
+        this.getComponent(Transform).position.set(0, 0.6, 1);
         this.playPickUpAnim();
         this.toggleOnPointerDown(false);
     }
